@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Project Maple — Moderator Onboarding</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
+:root{--accent:#D9772E;--accent-dim:#B75F1E;--accent-soft:rgba(217,119,46,0.15);--accent-ink:#D9772E;--amber:#F59E0B;--amber-bg:#FFF8EC;--amber-text:#92400E;--amber-border:#f5d08a;--green:#22c55e;--green-bg:#EAF3DE;--green-text:#27500A;--red:#ef4444;--red-bg:#FEF2F2;--red-text:#991b1b;--blue:#3b82f6;--blue-bg:#EFF6FF;--blue-text:#1e3a8a;--font:-apple-system,'SF Pro Display','SF Pro Text',BlinkMacSystemFont,'Helvetica Neue',sans-serif;--font-num:'Avenir Next','Avenir','SF Pro Display',-apple-system,sans-serif;}
+[data-theme="dark"]{--bg:#0f0f11;--bg2:#1a1a1e;--bg3:#232329;--bg4:#2d2d34;--text:#F5F4F8;--text2:#a8a8b2;--text3:#77777f;--border:rgba(255,255,255,0.08);--border-strong:rgba(255,255,255,0.14);--input-bg:#232329;--card-bg:#1a1a1e;--nav-bg:rgba(15,15,17,0.88);--sidebar-bg:#1a1a1e;--shadow-sm:0 2px 12px rgba(0,0,0,0.4);--shadow-md:0 8px 40px rgba(0,0,0,0.5);--shadow-lg:0 20px 60px rgba(0,0,0,0.6);--accent-ink:#E8A463;}
+[data-theme="light"]{--bg:#f5f5f7;--bg2:#ffffff;--bg3:#fbfbfd;--bg4:#e8e8ed;--text:#1d1d1f;--text2:#4a4a4f;--text3:#8a8a8e;--border:rgba(170,95,40,0.13);--border-strong:rgba(160,85,30,0.24);--input-bg:#f5f5f7;--card-bg:#ffffff;--nav-bg:rgba(245,245,247,0.88);--sidebar-bg:#ffffff;--shadow-sm:0 2px 12px rgba(0,0,0,0.06);--shadow-md:0 8px 40px rgba(0,0,0,0.10);--shadow-lg:0 20px 60px rgba(0,0,0,0.12);--accent-ink:#B75F1E;}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;letter-spacing:-0.01em;transition:background .3s,color .3s;overflow-x:hidden;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+input,select,textarea{font-family:inherit;}input:focus{outline:none;}
+::-webkit-scrollbar{width:10px;height:10px;}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:6px;}
+
+/* login */
+#login{position:fixed;inset:0;z-index:1000;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px;}
+.login-card{width:100%;max-width:430px;background:var(--card-bg);border:.5px solid var(--border);border-radius:20px;box-shadow:var(--shadow-lg);padding:34px 30px;animation:fadeUp .5s ease both;}
+.login-logo{width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,var(--accent),#F0A24D);display:flex;align-items:center;justify-content:center;margin-bottom:18px;font-weight:700;color:#fff;font-size:22px;}
+.login-eyebrow{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);margin-bottom:6px;}
+.login-title{font-size:25px;font-weight:600;letter-spacing:-.03em;margin-bottom:6px;}
+.login-sub{font-size:14px;color:var(--text2);line-height:1.5;margin-bottom:22px;}
+.role-grid{display:flex;flex-direction:column;gap:9px;}
+.role-btn{display:flex;align-items:center;gap:13px;padding:14px 15px;border:.5px solid var(--border-strong);border-radius:12px;background:var(--bg3);text-align:left;transition:all .2s cubic-bezier(.34,1.2,.64,1);}
+.role-btn:hover{border-color:var(--accent);background:var(--accent-soft);transform:translateY(-1px);}
+.role-ic{width:38px;height:38px;border-radius:11px;background:var(--bg2);border:.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;}
+.role-name{font-size:15px;font-weight:600;}.role-desc{font-size:12px;color:var(--text3);margin-top:2px;}
+.demo-tag{display:inline-block;margin-top:20px;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--amber-text);background:var(--amber-bg);border:.5px solid var(--amber-border);border-radius:20px;padding:4px 10px;}
+.lg-label{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text3);margin:2px 0 7px;display:block;}
+.lg-input{width:100%;background:var(--input-bg);border:.5px solid var(--border-strong);border-radius:12px;padding:13px 15px;font-size:15px;color:var(--text);}
+.lg-input:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft);}
+.lg-err{font-size:12px;color:var(--red);margin-top:8px;min-height:15px;}
+.lg-go{width:100%;margin-top:6px;background:var(--accent);color:#fff;border-radius:12px;padding:13px;font-weight:500;font-size:15px;transition:all .25s cubic-bezier(.4,0,.2,1);}
+.lg-go:hover{background:var(--accent-dim);transform:translateY(-1px);}
+.lg-hint{font-size:12px;color:var(--text3);margin-top:12px;line-height:1.45;}
+.lg-demo{margin-top:14px;padding-top:14px;border-top:.5px solid var(--border);font-size:12px;color:var(--text3);}
+.lg-demo button{color:var(--accent-ink);font-weight:600;font-size:12px;}.lg-demo button:hover{text-decoration:underline;}
+
+/* nav */
+nav{position:sticky;top:0;z-index:200;height:52px;background:var(--nav-bg);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:.5px solid var(--border);display:flex;align-items:center;padding:0 16px;}
+.nav-left{display:flex;align-items:center;gap:12px;flex:1;min-width:0;}
+.nav-logo{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#F0A24D);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:14px;}
+.nav-brand{font-size:15px;font-weight:600;letter-spacing:-.02em;}.nav-brand span{color:var(--text3);font-weight:400;}
+.nav-right{display:flex;align-items:center;gap:8px;}
+.menu-toggle{width:32px;height:32px;display:none;align-items:center;justify-content:center;border-radius:8px;}
+.icon-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:8px;color:var(--text2);transition:background .2s;}
+.icon-btn:hover{background:var(--bg3);}
+.user-chip{display:flex;align-items:center;gap:8px;padding:5px 10px 5px 6px;background:var(--bg3);border:.5px solid var(--border);border-radius:20px;font-size:13px;font-weight:500;}
+.user-av{width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;}
+.role-pill{font-size:9px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;border-radius:20px;background:var(--accent-soft);color:var(--accent-ink);}
+
+.shell{display:flex;min-height:calc(100vh - 52px);}
+.sidebar{width:230px;background:var(--sidebar-bg);border-right:.5px solid var(--border);padding:16px 12px;flex-shrink:0;display:flex;flex-direction:column;gap:3px;}
+.side-group{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);padding:14px 12px 6px;}
+.side-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;font-size:14px;font-weight:500;color:var(--text2);transition:all .15s;}
+.side-item:hover{background:var(--bg3);color:var(--text);}
+.side-item.active{background:var(--accent-soft);color:var(--accent-ink);font-weight:600;}
+.side-item .si-ic{width:18px;text-align:center;font-size:15px;}
+.content{flex:1;padding:28px 32px;min-width:0;overflow-x:hidden;max-width:1100px;}
+
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:22px;gap:16px;flex-wrap:wrap;}
+.page-title{font-size:clamp(22px,2.6vw,29px);font-weight:600;letter-spacing:-.03em;}
+.page-sub{font-size:14px;color:var(--text2);margin-top:3px;}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 17px;border-radius:11px;font-size:14px;font-weight:500;transition:all .22s cubic-bezier(.4,0,.2,1);}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{background:var(--accent-dim);transform:translateY(-1px);box-shadow:0 6px 18px var(--accent-soft);}
+.btn-secondary{background:var(--bg2);border:.5px solid var(--border-strong);color:var(--text2);}
+.btn-secondary:hover{background:var(--bg4);color:var(--text);}
+.btn-lg{padding:13px 22px;font-size:15px;}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+
+/* cert banner */
+.cert{display:flex;align-items:center;gap:18px;background:var(--card-bg);border:.5px solid var(--border);border-radius:18px;padding:20px 24px;margin-bottom:24px;box-shadow:var(--shadow-sm);}
+.cert.done{border-color:rgba(34,197,94,.4);background:linear-gradient(90deg,var(--green-bg),var(--card-bg) 60%);}
+[data-theme="dark"] .cert.done{background:linear-gradient(90deg,rgba(34,197,94,.12),var(--card-bg) 60%);}
+.cert-ring{width:70px;height:70px;flex-shrink:0;position:relative;}
+.cert-ring svg{transform:rotate(-90deg);}
+.cert-ring .pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-num);font-weight:300;font-size:20px;}
+.cert-body{flex:1;min-width:0;}
+.cert-title{font-size:18px;font-weight:600;letter-spacing:-.02em;}
+.cert-desc{font-size:13.5px;color:var(--text2);margin-top:3px;line-height:1.45;}
+.badge-ok{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--green-text);background:var(--green-bg);border-radius:20px;padding:5px 12px;}
+[data-theme="dark"] .badge-ok{background:rgba(34,197,94,.16);color:#86e0a4;}
+
+/* module list (timeline) */
+.mods{position:relative;}
+.mod{display:flex;gap:16px;align-items:stretch;}
+.mod-rail{display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:34px;}
+.mod-dot{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;font-family:var(--font-num);border:2px solid var(--border-strong);background:var(--bg3);color:var(--text3);flex-shrink:0;z-index:1;transition:all .2s;}
+.mod-dot.done{background:var(--green);border-color:var(--green);color:#fff;}
+.mod-dot.active{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 0 0 5px var(--accent-soft);}
+.mod-line{width:2px;flex:1;background:var(--border-strong);margin:2px 0;min-height:14px;}
+.mod-line.done{background:var(--green);}
+.mod-card{flex:1;background:var(--card-bg);border:.5px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:14px;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:16px;transition:all .2s;cursor:pointer;}
+.mod-card:hover{border-color:var(--border-strong);transform:translateX(2px);}
+.mod-card.locked{opacity:.55;cursor:not-allowed;}
+.mod-card.locked:hover{transform:none;border-color:var(--border);}
+.mod-ic{width:40px;height:40px;border-radius:11px;background:var(--accent-soft);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;}
+.mod-meta{flex:1;min-width:0;}
+.mod-name{font-size:15.5px;font-weight:600;letter-spacing:-.01em;}
+.mod-sub{font-size:12.5px;color:var(--text3);margin-top:2px;}
+.mod-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.mod-time{font-size:11px;color:var(--text3);}
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;border-radius:20px;padding:3px 9px;}
+.pill.done{background:var(--green-bg);color:var(--green-text);}
+.pill.active{background:var(--accent-soft);color:var(--accent-ink);}
+.pill.locked{background:var(--bg4);color:var(--text3);}
+.pill.blue{background:var(--blue-bg);color:var(--blue-text);}
+.pill.amber{background:var(--amber-bg);color:var(--amber-text);}
+.pill.red{background:var(--red-bg);color:var(--red-text);}
+[data-theme="dark"] .pill.done{background:rgba(34,197,94,.18);color:#86e0a4;}
+[data-theme="dark"] .pill.blue{background:rgba(59,130,246,.18);color:#93b8f6;}
+[data-theme="dark"] .pill.amber{background:rgba(245,158,11,.18);color:#e7b765;}
+[data-theme="dark"] .pill.red{background:rgba(239,68,68,.18);color:#f3a3a3;}
+
+/* module reader */
+.reader{background:var(--card-bg);border:.5px solid var(--border);border-radius:18px;padding:32px 38px;box-shadow:var(--shadow-sm);}
+.reader h2{font-size:24px;font-weight:600;letter-spacing:-.03em;margin-bottom:4px;}
+.reader .r-sub{color:var(--text2);font-size:14px;margin-bottom:22px;}
+.reader h3{font-size:15px;font-weight:600;color:var(--accent-ink);margin:22px 0 8px;letter-spacing:-.01em;}
+.reader p{font-size:14.5px;line-height:1.65;color:var(--text);margin-bottom:12px;}
+.reader ul{margin:0 0 12px 4px;padding:0;list-style:none;}
+.reader li{font-size:14.5px;line-height:1.6;color:var(--text);padding-left:20px;position:relative;margin-bottom:7px;}
+.reader li:before{content:'';position:absolute;left:4px;top:9px;width:6px;height:6px;border-radius:50%;background:var(--accent);}
+.reader b{font-weight:600;}
+.callout{display:flex;gap:11px;background:var(--accent-soft);border-radius:12px;padding:13px 16px;margin:16px 0;}
+.callout .c-ic{color:var(--accent-ink);flex-shrink:0;font-size:15px;}
+.callout .c-tx{font-size:13.5px;line-height:1.5;color:var(--text);}
+.callout.warn{background:var(--amber-bg);}.callout.warn .c-ic{color:var(--amber);}.callout.warn .c-tx{color:var(--amber-text);}
+[data-theme="dark"] .callout.warn{background:rgba(245,158,11,.12);}[data-theme="dark"] .callout.warn .c-tx{color:#e7b765;}
+.reader-foot{display:flex;align-items:center;justify-content:space-between;margin-top:28px;padding-top:20px;border-top:.5px solid var(--border);}
+
+/* quiz */
+.qz-top{display:flex;align-items:center;gap:14px;margin-bottom:20px;}
+.qz-prog{flex:1;height:7px;background:var(--bg4);border-radius:4px;overflow:hidden;}
+.qz-prog span{display:block;height:100%;background:var(--accent);transition:width .3s;}
+.qz-count{font-size:12px;color:var(--text3);font-weight:500;flex-shrink:0;}
+.qz-q{font-size:19px;font-weight:600;letter-spacing:-.02em;line-height:1.4;margin-bottom:20px;}
+.qz-opt{display:block;width:100%;text-align:left;background:var(--bg3);border:1.5px solid var(--border-strong);border-radius:12px;padding:15px 17px;font-size:14.5px;margin-bottom:11px;transition:all .15s;color:var(--text);}
+.qz-opt:hover:not(:disabled){border-color:var(--accent);}
+.qz-opt.correct{border-color:var(--green);background:var(--green-bg);color:var(--green-text);}
+.qz-opt.wrong{border-color:var(--red);background:var(--red-bg);color:var(--red-text);}
+[data-theme="dark"] .qz-opt.correct{background:rgba(34,197,94,.14);color:#a7e8bd;}
+[data-theme="dark"] .qz-opt.wrong{background:rgba(239,68,68,.14);color:#f3b0b0;}
+.qz-opt:disabled{cursor:default;}
+.qz-fb{border-radius:12px;padding:14px 16px;margin:6px 0 4px;font-size:13.5px;line-height:1.55;animation:fadeUp .25s ease both;}
+.qz-fb.ok{background:var(--green-bg);color:var(--green-text);}.qz-fb.no{background:var(--red-bg);color:var(--red-text);}
+[data-theme="dark"] .qz-fb.ok{background:rgba(34,197,94,.12);color:#a7e8bd;}[data-theme="dark"] .qz-fb.no{background:rgba(239,68,68,.12);color:#f3b0b0;}
+.qz-fb b{font-weight:700;}
+.qz-result{text-align:center;padding:20px 0;}
+.qz-score{font-family:var(--font-num);font-weight:300;font-size:64px;line-height:1;letter-spacing:-.02em;}
+.qz-score.pass{color:var(--green);}.qz-score.fail{color:var(--amber);}
+
+/* kpi + panels (admin) */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:14px;margin-bottom:24px;}
+.kpi{background:var(--card-bg);border:.5px solid var(--border);border-radius:16px;padding:18px 20px;min-height:104px;display:flex;flex-direction:column;justify-content:space-between;transition:box-shadow .22s;}
+.kpi:hover{box-shadow:var(--shadow-md);}
+.kpi-label{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text3);}
+.kpi-num{font-family:var(--font-num);font-weight:300;font-size:42px;line-height:1;letter-spacing:-.02em;text-align:right;}
+.kpi-num small{font-size:18px;color:var(--text3);}
+.kpi.accent .kpi-num{color:var(--accent-ink);}.kpi.green .kpi-num{color:var(--green);}.kpi.amber .kpi-num{color:var(--amber);}.kpi.blue .kpi-num{color:var(--blue);}
+.kpi-foot{font-size:11px;color:var(--text3);text-align:right;margin-top:4px;}
+.panel{background:var(--card-bg);border:.5px solid var(--border);border-radius:18px;padding:22px 24px;margin-bottom:18px;box-shadow:var(--shadow-sm);}
+.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:10px;}
+.panel-title{font-size:16px;font-weight:600;letter-spacing:-.02em;}
+.panel-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;}
+@media(max-width:900px){.panel-grid{grid-template-columns:1fr;}}
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px;}
+.tbl th{text-align:left;padding:9px 12px;font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text3);border-bottom:.5px solid var(--border-strong);}
+.tbl td{padding:11px 12px;border-bottom:.5px solid var(--border);}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr.clickable{cursor:pointer;transition:background .15s;}
+.tbl tr.clickable:hover td{background:var(--bg3);}
+.mini-bar{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;min-width:80px;}
+.mini-bar span{display:block;height:100%;background:var(--accent);}
+.flag{font-size:11px;font-weight:600;color:var(--text2);}
+
+.seg{display:inline-flex;gap:3px;background:var(--bg3);border:.5px solid var(--border);border-radius:11px;padding:3px;}
+.seg button{padding:7px 13px;border-radius:8px;font-size:13px;font-weight:500;color:var(--text2);transition:all .18s;}
+.seg button.active{background:var(--bg2);color:var(--text);font-weight:600;box-shadow:0 1px 6px rgba(0,0,0,.1);}
+
+/* modal */
+.modal-bg{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-bg.show{display:flex;animation:fade .2s ease;}
+.modal{width:100%;max-width:520px;max-height:88vh;overflow-y:auto;background:var(--card-bg);border:.5px solid var(--border-strong);border-radius:18px;box-shadow:var(--shadow-lg);padding:26px;animation:fadeUp .3s ease both;}
+.modal-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;}
+.modal-title{font-size:19px;font-weight:600;letter-spacing:-.02em;}
+.modal-close{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--text3);}
+.modal-close:hover{background:var(--bg3);}
+.detail-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:.5px solid var(--border);font-size:13.5px;}
+.detail-row:last-child{border-bottom:none;}
+.detail-row .d-ic{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
+.d-ic.done{background:var(--green);color:#fff;}.d-ic.pend{background:var(--bg4);color:var(--text3);}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--text);color:var(--bg);border-radius:14px;padding:12px 20px;font-size:14px;font-weight:500;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.4,0,.2,1);z-index:999;max-width:90vw;text-align:center;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fade{from{opacity:0;}to{opacity:1;}}
+@media(max-width:780px){.menu-toggle{display:flex;}.sidebar{position:fixed;left:0;top:52px;bottom:0;z-index:150;transform:translateX(-100%);transition:transform .25s;box-shadow:var(--shadow-lg);}.sidebar.open{transform:translateX(0);}.content{padding:18px 16px;}.nav-brand span{display:none;}.reader{padding:24px 20px;}.panel-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <div class="login-card">
+    <div class="login-logo">M</div>
+    <div class="login-eyebrow">Centific · Project Maple</div>
+    <div class="login-title">Moderator Onboarding</div>
+    <div class="login-sub">Sign in with your Centific email to continue — we'll take you to the right place based on your account.</div>
+    <label class="lg-label">Centific email</label>
+    <input id="emailField" class="lg-input" type="email" autocomplete="email" placeholder="you@centific.com" onkeydown="if(event.key==='Enter')doLogin()">
+    <div id="lgErr" class="lg-err"></div>
+    <button class="lg-go" onclick="doLogin()">Continue →</button>
+    <div class="lg-hint">Moderators land in their learning path; program admins land in the cohort dashboard — no need to choose.</div>
+    <div class="lg-demo">Demo shortcuts: <button onclick="demoLogin('moderator')">enter as a moderator</button> · <button onclick="demoLogin('admin')">enter as an admin</button></div>
+    <span class="demo-tag">Demo · directory login · Excel + PA next</span>
+  </div>
+</div>
+
+<nav style="display:none" id="nav">
+  <div class="nav-left"><button class="menu-toggle icon-btn" onclick="toggleSidebar()">☰</button><div class="nav-logo">M</div><div class="nav-brand">Project Maple <span>· Onboarding</span></div></div>
+  <div class="nav-right"><button class="icon-btn" onclick="toggleTheme()" title="Theme">◐</button><div class="user-chip"><span class="user-av" id="userAv">A</span><span id="userName">Moderator</span><span class="role-pill" id="userRole">Mod</span></div><button class="icon-btn" onclick="logout()" title="Sign out">⎋</button></div>
+</nav>
+
+<div class="shell" style="display:none" id="shell"><aside class="sidebar" id="sidebar"></aside><main class="content" id="content"></main></div>
+<div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()"><div class="modal" id="modal"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===================== DATA ===================== */
+const MODULES=[
+ {id:'welcome',ic:'👋',title:'Welcome to Project Maple',sub:'What we\'re building and your role',min:5,type:'content',body:`
+   <h3>What Maple is</h3>
+   <p>Maple collects natural, everyday <b>conversations between bilingual speakers</b> who mix English into their primary language the way people really do — <b>code-switching</b>. These audio recordings train <b>speech-recognition (ASR) systems</b> to understand bilingual speakers the way they actually talk.</p>
+   <h3>Your role as a moderator</h3>
+   <p>You run remote recording sessions. In each session you'll:</p>
+   <ul><li>Welcome two participants into an online recording room and get their audio working.</li><li>Guide a relaxed conversation so that natural code-switching happens — without ever telling people to switch.</li><li>Record several takes, then QA each one against a quality checklist.</li><li>Submit your verdicts and close the session out.</li></ul>
+   <div class="callout"><span class="c-ic">◆</span><span class="c-tx">Sessions are <b>audio only</b> — there are no cameras. You'll never appear on the recording, and you steer largely through a one-way text chat.</span></div>
+   <h3>How this onboarding works</h3>
+   <p>Work through the modules below at your own pace, in your own timezone. At the end there's a short <b>knowledge check</b> — pass it and you're cleared to run real sessions. Keep the full <b>Moderator SOP</b> and <b>Topic & Prompt Bank</b> open as you go; they're your day-to-day references.</p>`},
+ {id:'codeswitch',ic:'🗣️',title:'Code-Switching, Up Close',sub:'The nuances that decide whether a recording counts',min:10,type:'content',body:`
+   <h3>The two switching patterns</h3>
+   <ul><li><b>Intra-sentential \u2014 the pattern we require.</b> The switch happens <b>inside</b> a sentence or clause: "\u00bfPor qu\u00e9 te hicieron <b>sales representative</b>?" Every valid recording needs some of this.</li><li><b>Inter-sentential \u2014 allowed, but not enough on its own.</b> One sentence in the primary language, the next in English: "Estoy agotada hoy. <b>Anyway, let\u2019s talk tomorrow.</b>"</li></ul>
+   <div class="callout warn"><span class="c-ic">\u26A0</span><span class="c-tx">A conversation that only ever switches <i>between</i> sentences \u2014 never <i>within</i> one \u2014 does not meet the bar.</span></div>
+   <h3>Code-switch vs. loanword \u2014 the distinction people miss</h3>
+   <p>Not every English-looking word is a code-switch. A <b>loanword</b> is a foreign-origin word that has become a normal part of the primary language and is said the native way \u2014 it does <b>not</b> count.</p>
+   <ul><li><b>Quick test:</b> would a one-language speaker of the primary language use this word normally, pronounced natively? Then it\u2019s a loanword (e.g. "computer", "f\u00fatbol", "karaoke", "week-end" in French). It doesn\u2019t count as switching.</li><li>If the speaker genuinely produces English \u2014 their own fluent pronunciation and grammar \u2014 <b>that</b> is a code-switch.</li></ul>
+   <h3>The ratio, and what drives it</h3>
+   <p>Aim for English at <b>~10\u201315%</b> of the conversation, measured after transcription and <b>spread throughout</b>. You never count live \u2014 you gauge and steer. <b>Topic drives the ratio:</b> Higher-tagged topics (work, technology, study/life abroad, pop culture) pull more English; Lower-tagged topics (family, food, home life) pull less.</p>
+   <h3>Natural vs. forced \u2014 the line that decides validity</h3>
+   <ul><li><b>Natural (valid):</b> spontaneous, the speaker\u2019s own fluent English, arising from what they\u2019re talking about.</li><li><b>Forced (rejected):</b> switching on cue, read from a list, halting or over-articulated, or in a put-on accent.</li></ul>
+   <div class="callout"><span class="c-ic">\u25C6</span><span class="c-tx">Your job is to create the <b>conditions</b> for natural switching \u2014 topic and follow-ups \u2014 never to instruct it.</span></div>`},
+ {id:'quality',ic:'🎯',title:'Recording Quality & the QA Bar',sub:'What every delivered recording must clear',min:12,type:'content',body:`
+   <p>Every delivered recording has to clear a quality bar, and <b>failing any single item rejects it</b>. Think of it in two halves: is the <b>audio</b> usable, and is the <b>conversation</b> valid?</p>
+   <h3>Audio quality \u2014 the foundation</h3>
+   <ul><li>Quiet, intelligible audio, with <b>each speaker on their own isolated channel</b>.</li><li><b>Rejects:</b> noise, distortion, or dropout that makes speech hard to follow; a third-party voice that can\u2019t be separated; persistent echo, reverb, or clipping; a speaker too quiet to follow; a channel that doesn\u2019t isolate its speaker.</li><li><b>Not</b> rejects: a single unclear word or a brief noisy patch \u2014 those are handled downstream.</li></ul>
+   <h3>The full reject bar (any one \u2192 reject)</h3>
+   <ul><li><b>Code-switching:</b> too little switching or below the ratio; only isolated loanwords / brand names; only between-sentence switching; forced or scripted; halting or affected-accent English; a third language used more than incidentally.</li><li><b>Naturalness:</b> reading, reciting, or rehearsed delivery; AI / synthetic / text-to-speech audio; an imitated accent.</li><li><b>Conversation:</b> a monologue or one speaker dominating; very uneven participation; an incomplete or abruptly-ended talk; a silence longer than <b>6 seconds</b>; anything that isn\u2019t a genuine back-and-forth.</li><li><b>Duration:</b> under <b>3 minutes</b> or over <b>30 minutes</b>.</li><li><b>Content &amp; compliance:</b> real personal identifiers (names, addresses, financial details); political, religious, violent, or offensive material; duplicate or reused content.</li><li><b>Speakers:</b> primary language not at native level; English below the declared level; more than two speakers.</li></ul>
+   <h3>Your in-session QA \u2014 the 13 checks</h3>
+   <p>After each take you answer <b>13 Yes/No questions</b> in Recording Review \u2014 covering audio, natural and within-sentence switching, balance, duration, silences, third languages, and PII. They map directly to the reject bar above. <b>All Yes</b> unlocks Pass / Weak Pass; a <b>single No</b> means Fail. (The exact wording lives in the Moderator SOP.)</p>
+   <div class="callout warn"><span class="c-ic">\u26A0</span><span class="c-tx">When you\u2019re unsure, <b>re-record rather than pass</b>. A rejected file costs one take; a bad file that slips through costs the dataset.</span></div>`},
+ {id:'session',ic:'🗂️',title:'Running a Session',sub:'The end-to-end flow, join to close',min:10,type:'content',body:`
+   <h3>The flow, in order</h3>
+   <ul><li><b>Join ~5 min early</b> and paste a welcome message in the chat so participants can read it as they get set up.</li><li><b>Confirm the roster</b> (two participants + you as MOD) and agree on the <b>aliases</b> everyone wants used.</li><li><b>Sound check</b> — confirm each person is clearly audible and can hear the other.</li><li><b>Brief them</b> on the task: a natural conversation, mixing in English, no script.</li><li><b>Practice takes</b> — at least two, and more if needed (see the gate below).</li><li><b>Record</b> the real takes.</li><li><b>QA</b> each recording against the checklist and submit Pass / Weak Pass / Fail.</li><li><b>End the call, then close the session.</b></li></ul>
+   <h3>What you record</h3>
+   <ul><li><b>Real take</b> — one conversation, ~10 min.</li><li><b>Primary recording</b> — ~30 min.</li><li><b>Secondary recordings</b> — two of ~10 min, or one ~20 + one ~10, on new topics.</li></ul>
+   <div class="callout"><span class="c-ic">🔒</span><span class="c-tx"><b>The practice gate:</b> don't start any real recording until you're confident both participants can code-switch naturally. Two practice takes is the minimum, not a cap.</span></div>`},
+ {id:'technique',ic:'🎚️',title:'Moderating for Natural Switching',sub:'Steer it — and when to stop vs. nudge',min:9,type:'content',body:`
+   <h3>You're a facilitator, not an interviewer</h3>
+   <p>Natural switching comes from <b>topic and setting</b>, never from instruction. Pick topics that pull English out (work, tech, study abroad, pop culture) and ask follow-ups that invite opinions and explanations.</p>
+   <h3>Never do this</h3>
+   <ul><li>Say "say that in English" or cue a switch.</li><li>Hand participants a list of English words to insert.</li><li>Accept scripted, read-aloud, or affected-accent switching.</li></ul>
+   <h3>Stop &amp; re-record vs. nudge</h3>
+   <p><b>Stop and re-record</b> for: forced/scripted switching, unclear audio, a take under 3 min, or a real name/PII.</p>
+   <p><b>Nudge with a text-chat reminder</b> (don't redo) for: no English for a while, only isolated words, long silences, or one speaker dominating — steer the next follow-up rather than requesting English directly.</p>`},
+ {id:'tool',ic:'🛠️',title:'The OneForma Recording Tool',sub:'Room controls, recording, QA, close-out',min:8,type:'content',body:`
+   <h3>The recording room</h3>
+   <p>It's an audio-only voice call. Your controls are <b>MUTE</b>, <b>REC TIME</b>, <b>RECORD</b>, and <b>END</b>. The <b>chat is one-way</b> — only you can send; participants read your messages.</p>
+   <h3>Recording a take</h3>
+   <ul><li>Set the topic and confirm participants are ready.</li><li><b>Mute yourself</b>, then click <b>RECORD</b> — it changes to STOP when recording.</li><li>Watch <b>REC TIME</b>; aim for 10–30 min per take.</li><li>Click <b>STOP</b> — the file saves to Media Files as a <b>Draft</b>.</li><li><b>Never speak during a take.</b> If you must step in, stop the take first.</li></ul>
+   <h3>QA (Recording Review)</h3>
+   <p>Open <b>Recording Review</b> → <b>Media Files</b> → <b>Start QA</b>. For each Draft file, tag the topics and answer all <b>13 checklist questions</b>. All "Yes" unlocks Pass / Weak Pass; a single "No" means Fail.</p>
+   <h3>Closing out</h3>
+   <p>Click <b>END</b>, then go to <b>Operation → Sessions</b>, open the session's Action menu, and click <b>Close Session</b>. Never leave a session open.</p>`},
+ {id:'walkthrough',ic:'🎬',title:'Watch: Full Session Walkthrough',sub:'A complete session, demonstrated end to end',min:20,type:'content',body:`
+   <h3>Your session walkthrough</h3>
+   <p>This is a guided demo of a complete session in the OneForma tool — joining and briefing, recording takes, QA, and closing out. It’s meant to be watched <b>hand-in-hand with the Moderator SOP</b>: the modules here teach the concepts, and this shows you the click-by-click flow in the real tool. Keep the SOP open and follow along.</p>
+   <div style="position:relative;padding-top:56.25%;border-radius:12px;overflow:hidden;border:.5px solid var(--border);background:#000;margin:14px 0">
+     <iframe src="https://digitaltechedge.sharepoint.com/sites/Verdi_Juniper/_layouts/15/embed.aspx?UniqueId=479783c0-17ce-4573-accf-0d3023c43a28" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen title="Maple session walkthrough"></iframe>
+   </div>
+   <div class="callout"><span class="c-ic">▶</span><span class="c-tx">Signed in with your Centific account, the recording plays above. If it doesn’t load, <a href="https://digitaltechedge.sharepoint.com/:v:/r/sites/Verdi_Juniper/Shared%20Documents/QA/For%20Moderator/Project%20Juniper%20-%20Moderator%20SOP%20_%20Tooling%20Guide-20260804_194821-Meeting%20Recording.mp4?d=w479783c017ce4573accf0d3023c43a28&amp;csf=1&amp;web=1&amp;e=UlqwSj" target="_blank" rel="noopener" style="color:var(--accent-ink);font-weight:600">open it in SharePoint ↗</a>.</span></div>`},
+ {id:'privacy',ic:'🔐',title:'Privacy & Professional Conduct',sub:'Aliases, PII, and handling participants',min:6,type:'content',body:`
+   <h3>Aliases keep it anonymous</h3>
+   <p>Participants sign up with a <b>fake name / alias</b> and never see each other's real names. Confirm what each wants to be called, and remind everyone not to say <b>real names, locations, workplaces, or other personal details</b> on the recording — real identifiers fail QA.</p>
+   <h3>Handling questions</h3>
+   <ul><li><b>Too many questions:</b> answer briefly, then redirect to the conversation.</li><li><b>Rate / payment:</b> don't quote or negotiate — point them to the job posting.</li><li><b>Data / privacy:</b> refer them to the consent they signed; don't answer yourself.</li></ul>
+   <h3>Conduct</h3>
+   <ul><li>Be respectful and calm; give feedback only between takes.</li><li>Stay muted during takes — your voice on a channel is a rejection.</li></ul>
+   <div class="callout"><span class="c-ic">✓</span><span class="c-tx">Next up: the <b>knowledge check</b>. It pulls from everything above — pass it and you're cleared for production.</span></div>`},
+ {id:'centific',ic:'🏢',title:'Working at Centific',sub:'Accounts, hours, pay, and how we work',min:8,type:'content',body:`
+   <h3>Your accounts &amp; channels</h3>
+   <ul><li>Use your <b>Centific email</b> for all project communication \u2014 never a personal address.</li><li>Everything happens across <b>OneForma</b> (where your sessions live), <b>Centific email</b>, and <b>MS Teams</b> \u2014 the team watches Teams during sessions so you can flag issues live.</li><li>You\u2019ll be set up with a OneForma account and a participant/vendor ID once you\u2019re certified.</li></ul>
+   <h3>Logging your hours</h3>
+   <ul><li>Record your actual working hours in the Centific timesheet system (<b>Samay</b>) each day \u2014 including onboarding time.</li><li><span style="color:var(--text3)">[Placeholder: the exact Samay steps / screenshots will be added here.]</span></li></ul>
+   <h3>Getting paid</h3>
+   <ul><li>Your rate and payment terms are on the <b>job posting</b> \u2014 that\u2019s the authoritative source. Don\u2019t rely on figures shared verbally, and don\u2019t quote or negotiate rates with participants.</li><li>Complete each session in the time allotted; incomplete sessions can affect compensation.</li></ul>
+   <h3>Confidentiality &amp; how we work</h3>
+   <ul><li>All project materials \u2014 the SOP, guides, topic bank \u2014 are <b>Centific Confidential</b>. Don\u2019t share them outside the team.</li><li>Protect participant privacy: aliases only, and no real names or personal details in a recording.</li><li>Be reliable \u2014 join on time, honour your scheduled sessions, and give notice as early as you can if you can\u2019t make one.</li></ul>
+   <div class="callout"><span class="c-ic">\u25C6</span><span class="c-tx">This section will grow as we add the exact timesheet steps and any other admin tasks that come up.</span></div>`},
+  {id:'quiz',ic:'✅',title:'Knowledge Check',sub:'Pass to be cleared for production',min:10,type:'quiz'}
+];
+
+const QUIZ=[
+ {q:'Roughly how much of the conversation should be in English?',opts:['About 40–50%','About 10–15%, spread throughout','As much as possible','It doesn\'t matter'],a:1,ex:'Aim for ~10–15% English, spread across the conversation rather than clustered.'},
+ {q:'A participant reads English words from a list you gave them. What do you do?',opts:['Let it go — English is English','Stop and re-record — that\'s forced switching','Ask for more English words','Mark it Weak Pass'],a:1,ex:'Switching read from a list is forced/scripted. Stop and re-record; never supply word lists.'},
+ {q:'A recording comes out to 2 minutes 40 seconds. In QA, this is…',opts:['A Pass','A Weak Pass','A Fail — under the 3-minute minimum','Fine if the audio is clear'],a:2,ex:'Conversations must be 3–30 minutes. Under 3 minutes fails the length check.'},
+ {q:'During a take, one participant hasn\'t used any English for about a minute. Best move?',opts:['Stop and re-record the take','Unmute and ask them to use English','Send a text-chat nudge steering the next follow-up toward an English-heavy topic','End the session'],a:2,ex:'This is a nudge situation, not a redo. Steer with the chat — never request English directly.'},
+ {q:'A participant says their real full name on the recording. What happens?',opts:['Nothing — names are fine','It\'s PII — stop and re-record','Ask them to spell it','Only a problem if it\'s a last name'],a:1,ex:'Real names are personal identifiers (PII). Stop and re-record.'},
+ {q:'Can you speak out loud to guide participants during a take?',opts:['Yes, quietly','Yes, between sentences','No — stay muted and use text chat; stop the take if you must step in','Only to fix audio'],a:2,ex:'Your voice on a speaker\'s channel is grounds for rejection. Stay muted; steer via chat.'},
+ {q:'After two practice takes, participants still switch on cue and it sounds scripted. Do you start the real recording?',opts:['Yes — two practice takes is the rule','No — keep practicing until switching sounds natural','Yes, but mark it Weak Pass','Record one and decide later'],a:1,ex:'The practice gate: don\'t record real takes until switching is genuinely natural. Two is the minimum, not a cap.'},
+ {q:'How do you QA the recordings after a session?',opts:['Email the files to your PM','Open Recording Review → Media Files, review each Draft, and answer the 13 QA questions','Just listen once and mark Pass','QA isn\'t part of the moderator\'s job'],a:1,ex:'You QA in Recording Review: review each Draft file and answer all 13 checklist questions, then Pass / Weak Pass / Fail.'},
+ {q:'You\'ve ended the call at the end of a session. Is anything else required?',opts:['No, ending the call is enough','Yes — go to Operation → Sessions and Close Session','Only if there were reshoots','Restart the room'],a:1,ex:'Ending the call isn\'t the same as closing. Always Close Session so it doesn\'t stay "In progress."'},
+ {q:'Are cameras used during a Maple session?',opts:['Yes, always on','Yes, but only the moderator\'s','No — sessions are audio only','Optional per participant'],a:2,ex:'There are no cameras in the current build — sessions are audio only.'}
+];
+const PASS_PCT=0.8;
+
+// mock cohort for the admin dashboard
+const DEMO_DIRECTORY=[
+ // Program admins (role column = 'admin')
+ {email:'jordan.lee@centific.com',name:'Jordan Lee',role:'admin',loc:'USA',tz:'PST (UTC-8)',done:0,score:null,status:'na',active:'now'},
+ {email:'bhargavsai.m@centific.com',name:'Bhargavsai M',role:'admin',loc:'USA',tz:'EST (UTC-5)',done:0,score:null,status:'na',active:'now'},
+ // Moderators — Maple priority locales (each paired with English)
+ {email:'sofia.ramirez@centific.com',name:'Sofía Ramírez',role:'moderator',loc:'Spain (es-ES)',tz:'CET (UTC+1)',done:10,score:90,status:'certified',active:'2h ago'},
+ {email:'daniela.torres@centific.com',name:'Daniela Torres',role:'moderator',loc:'USA (es-US)',tz:'CST (UTC-6)',done:10,score:85,status:'certified',active:'1d ago'},
+ {email:'yasmin.haddad@centific.com',name:'Yasmin Haddad',role:'moderator',loc:'UAE (ar-AE)',tz:'GST (UTC+4)',done:10,score:100,status:'certified',active:'20m ago'},
+ {email:'omar.nassar@centific.com',name:'Omar Nassar',role:'moderator',loc:'Arabic (ar-MSA)',tz:'AST (UTC+3)',done:5,score:null,status:'in_progress',active:'5h ago'},
+ {email:'noa.levi@centific.com',name:'Noa Levi',role:'moderator',loc:'Israel (he-IL)',tz:'IST (UTC+2)',done:6,score:null,status:'in_progress',active:'4h ago'},
+ {email:'sanne.devries@centific.com',name:'Sanne de Vries',role:'moderator',loc:'Netherlands (nl-NL)',tz:'CET (UTC+1)',done:3,score:null,status:'in_progress',active:'1d ago'},
+ {email:'giorgos.papadakis@centific.com',name:'Giorgos Papadakis',role:'moderator',loc:'Greece (el-GR)',tz:'EET (UTC+2)',done:9,score:60,status:'quiz_failed',active:'3h ago'},
+ {email:'lucia.fernandez@centific.com',name:'Lucía Fernández',role:'moderator',loc:'Spain (es-ES)',tz:'CET (UTC+1)',done:9,score:70,status:'quiz_failed',active:'2d ago'},
+ {email:'fatima.alsayed@centific.com',name:'Fatima Al-Sayed',role:'moderator',loc:'UAE (ar-AE)',tz:'GST (UTC+4)',done:0,score:null,status:'not_started',active:'6d ago'},
+ {email:'alex.moderator@centific.com',name:'Alex Moderator',role:'moderator',loc:'USA (es-US)',tz:'EST (UTC-5)',done:0,score:null,status:'not_started',active:'just now'}
+];
+let COHORT=[];
+const STAGE_LABEL={not_started:['Not started','locked'],in_progress:['In progress','blue'],quiz_failed:['Quiz not passed','red'],certified:['Certified','done']};
+
+/* ===================== STATE ===================== */
+let ROLE='moderator',VIEW='path',CUR_MOD=0,COHORT_FILTER='all';
+// current learner progress (starts fresh so the demo can be experienced live)
+const ME={name:'Alex Moderator',email:'',loc:'',tz:'',done:new Set(),quizBest:null,certified:false};
+const contentIds=MODULES.filter(m=>m.type==='content').map(m=>m.id);
+const passMark=Math.ceil(QUIZ.length*PASS_PCT);
+
+/* ================= BACKEND (Excel + Power Automate) =================
+   Paste your three Power Automate flow URLs below. While they stay as
+   placeholders the app runs in DEMO mode on the mock data and never
+   breaks. As soon as real URLs are present it goes LIVE: logins read the
+   Moderators table, progress loads/saves to the Progress table, and the
+   dashboard shows the real cohort. */
+const BACKEND={
+  getDirectory:'https://default9b415834803a4da0afdcfe6b1d52d6.49.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/04/workflows/f58f6bac30a54c608df6473e25567c7e/triggers/manual/paths/invoke?api-version=1',
+  getProgress :'https://default9b415834803a4da0afdcfe6b1d52d6.49.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/27/workflows/864949e064b94592b4a6b9f8cdf2b3af/triggers/manual/paths/invoke?api-version=1',
+  saveProgress:'https://default9b415834803a4da0afdcfe6b1d52d6.49.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/11/workflows/3de0f0c9d945434da87ad17adbcf734f/triggers/manual/paths/invoke?api-version=1'
+};
+const LIVE=/^https?:\/\//.test(BACKEND.getDirectory);
+const PASS80=Math.round(PASS_PCT*100);
+let DIR=[];          // active directory rows (mock in demo, fetched when live)
+let PROGRESS=null;   // progress rows (live only)
+let DATA_READY=false,_loadPromise=null;
+
+async function apiGet(url){const r=await fetch(url);if(!r.ok)throw new Error('GET '+r.status);const t=await r.text();let d;try{d=JSON.parse(t);}catch(e){return[];}return Array.isArray(d)?d:(d.value||[]);}
+function normDirRow(row){return {email:String(row.Email||'').trim().toLowerCase(),name:row.Name||'',role:String(row.Role||'moderator').trim().toLowerCase(),loc:row.Locale||'',tz:row.Timezone||'',active:row.Active||'yes'};}
+function loadData(){if(_loadPromise)return _loadPromise;_loadPromise=(async()=>{
+  if(LIVE){
+    try{const res=await Promise.all([apiGet(BACKEND.getDirectory),apiGet(BACKEND.getProgress)]);DIR=res[0].map(normDirRow).filter(r=>String(r.active).toLowerCase()!=='no');PROGRESS=res[1];}
+    catch(e){console.error('[Maple] backend load failed \u2014 using demo data:',e);DIR=DEMO_DIRECTORY;PROGRESS=null;}
+  }else{DIR=DEMO_DIRECTORY;PROGRESS=null;}
+  COHORT=buildCohort();DATA_READY=true;
+})();return _loadPromise;}
+function progressFor(email){email=String(email||'').toLowerCase();
+  if(LIVE&&PROGRESS){const rows=PROGRESS.filter(r=>String(r.Email||'').toLowerCase()===email);
+    const doneIds=new Set(rows.filter(r=>String(r.Status||'')==='done').map(r=>r.ModuleID));
+    const q=rows.find(r=>r.ModuleID==='quiz');const score=(q&&q.Score!==''&&q.Score!=null)?Number(q.Score):null;
+    const lastAt=rows.reduce((m,r)=>((r.UpdatedAt||'')>m?r.UpdatedAt:m),'');return {doneIds,score,lastAt};}
+  const rec=DEMO_DIRECTORY.find(r=>r.email===email);if(!rec)return{doneIds:new Set(),score:null,lastAt:''};
+  return {doneIds:new Set(MODULES.slice(0,rec.done||0).map(m=>m.id)),score:(rec.score!=null?rec.score:null),lastAt:rec.active||''};}
+function deriveStatus(p){if(p.doneIds.size===0)return'not_started';if(p.score!=null)return p.score>=PASS80?'certified':'quiz_failed';return'in_progress';}
+function formatActive(v){if(!v)return'\u2014';if(/^\d{4}-\d\d-\d\d/.test(v)){const h=(Date.now()-new Date(v).getTime())/3.6e6;if(h<1)return'just now';if(h<24)return Math.floor(h)+'h ago';return Math.floor(h/24)+'d ago';}return v;}
+function buildCohort(){return DIR.filter(r=>r.role==='moderator').map(r=>{const p=progressFor(r.email);
+  return {email:r.email,name:r.name,role:r.role,loc:r.loc,tz:r.tz,done:p.doneIds.size,score:p.score,status:deriveStatus(p),active:formatActive(p.lastAt)};});}
+async function saveProgress(moduleId,status,score){if(!LIVE||!/^https?:\/\//.test(BACKEND.saveProgress))return;
+  try{await fetch(BACKEND.saveProgress,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({email:ME.email,moduleId:moduleId,status:status,score:(score==null?'':score)})});}
+  catch(e){console.error('[Maple] saveProgress failed:',e);}}
+
+const NAV={
+ moderator:[{g:'Onboarding'},{v:'path',ic:'🧭',label:'My Learning Path'},{v:'resources',ic:'📎',label:'Resources'}],
+ admin:[{g:'Program'},{v:'dash',ic:'📊',label:'Cohort Dashboard'},{v:'curriculum',ic:'📚',label:'Curriculum'}]
+};
+const ROLE_LABEL={moderator:'Mod',admin:'Admin'};
+
+// Login mirrors the Orbit pattern: the typed email is looked up in the Moderators
+// directory. This DIRECTORY array stands in for the Excel Moderators table read via a
+// Power Automate flow; the record's `role` column decides mod vs admin. No SSO required.
+function findUser(email){return DIR.find(r=>r.email===email);}
+function applyProfile(rec){if(rec.role!=='moderator')return;const p=progressFor(rec.email);ME.email=rec.email;ME.name=rec.name;ME.loc=rec.loc;ME.tz=rec.tz;ME.done=new Set(p.doneIds);ME.quizBest=p.score;ME.certified=(p.score!=null&&p.score>=PASS80);}
+async function doLogin(){const el=document.getElementById('emailField');const email=(el.value||'').trim().toLowerCase();const err=document.getElementById('lgErr');
+ if(!/^[^@\s]+@centific\.com$/.test(email)){err.textContent='Please enter your @centific.com email address.';return;}
+ if(!DATA_READY){err.textContent='Signing in\u2026';await loadData();}
+ const rec=findUser(email);
+ if(!rec){err.textContent="That email isn't on the moderator list yet \u2014 check with your program admin.";return;}
+ err.textContent='';applyProfile(rec);startApp(rec.role,rec.name);}
+async function demoLogin(role){const email=role==='admin'?'jordan.lee@centific.com':'alex.moderator@centific.com';const el=document.getElementById('emailField');if(el)el.value=email;await doLogin();}
+function startApp(r,name){ROLE=r;VIEW=(r==='admin'?'dash':'path');document.getElementById('login').style.display='none';document.getElementById('nav').style.display='flex';document.getElementById('shell').style.display='flex';const nm=name||(r==='admin'?'Jordan Lee':ME.name);if(r==='moderator')ME.name=nm;document.getElementById('userName').textContent=nm;document.getElementById('userAv').textContent=nm[0].toUpperCase();document.getElementById('userRole').textContent=ROLE_LABEL[r];renderSidebar();renderView();}
+function logout(){document.getElementById('login').style.display='flex';document.getElementById('nav').style.display='none';document.getElementById('shell').style.display='none';}
+function renderSidebar(){document.getElementById('sidebar').innerHTML=NAV[ROLE].map(it=>it.g?`<div class="side-group">${it.g}</div>`:`<button class="side-item ${it.v===VIEW?'active':''}" onclick="go('${it.v}')"><span class="si-ic">${it.ic}</span>${it.label}</button>`).join('');}
+function go(v){VIEW=v;renderSidebar();renderView();document.getElementById('sidebar').classList.remove('open');window.scrollTo(0,0);}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');}
+function renderView(){const c=document.getElementById('content');const f={path:vPath,resources:vResources,module:vModule,dash:vDash,curriculum:vCurriculum}[VIEW];c.innerHTML=f?f():'';if(VIEW==='dash')drawCharts();}
+
+/* ===================== MODERATOR: PATH ===================== */
+function moduleState(i){const m=MODULES[i];if(ME.done.has(m.id))return'done';if(m.type==='quiz'){return contentIds.every(id=>ME.done.has(id))?'active':'locked';}
+ // content: available if all previous content done
+ const prevContent=MODULES.slice(0,i).filter(x=>x.type==='content');return prevContent.every(x=>ME.done.has(x.id))?'active':'locked';}
+function overallPct(){return Math.round(ME.done.size/MODULES.length*100);}
+function vPath(){
+ const pct=overallPct();const circ=2*Math.PI*30;const off=circ*(1-pct/100);
+ let banner;
+ if(ME.certified){banner=`<div class="cert done"><div class="cert-ring"><svg width="70" height="70"><circle cx="35" cy="35" r="30" stroke="var(--bg4)" stroke-width="6" fill="none"/><circle cx="35" cy="35" r="30" stroke="var(--green)" stroke-width="6" fill="none" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="0"/></svg><div class="pct" style="color:var(--green)">✓</div></div><div class="cert-body"><div class="cert-title">You're certified 🎉</div><div class="cert-desc">You've completed onboarding and passed the knowledge check. You're cleared to run real Maple sessions.</div></div><span class="badge-ok">● Cleared for production</span></div>`;}
+ else{banner=`<div class="cert"><div class="cert-ring"><svg width="70" height="70"><circle cx="35" cy="35" r="30" stroke="var(--bg4)" stroke-width="6" fill="none"/><circle cx="35" cy="35" r="30" stroke="var(--accent)" stroke-width="6" fill="none" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${off}"/></svg><div class="pct">${pct}%</div></div><div class="cert-body"><div class="cert-title">${pct===0?'Welcome — let\'s get you ready':'Keep going, '+ME.name.split(' ')[0]}</div><div class="cert-desc">Complete each module in order, then pass the knowledge check to be cleared for production. Work through it at your own pace.</div></div></div>`;}
+ const rows=MODULES.map((m,i)=>{const st=moduleState(i);const isLast=i===MODULES.length-1;const lineDone=ME.done.has(m.id);
+   const pill=st==='done'?'<span class="pill done">✓ Done</span>':st==='active'?`<span class="pill active">${m.type==='quiz'?'Take it':'Start'}</span>`:'<span class="pill locked">🔒 Locked</span>';
+   const dot=st==='done'?'<div class="mod-dot done">✓</div>':st==='active'?`<div class="mod-dot active">${i+1}</div>`:`<div class="mod-dot">${i+1}</div>`;
+   return `<div class="mod"><div class="mod-rail">${dot}${!isLast?`<div class="mod-line ${lineDone?'done':''}"></div>`:''}</div>
+     <div class="mod-card ${st==='locked'?'locked':''}" ${st!=='locked'?`onclick="openModule(${i})"`:''}>
+       <div class="mod-ic">${m.ic}</div>
+       <div class="mod-meta"><div class="mod-name">${m.title}</div><div class="mod-sub">${m.sub}</div></div>
+       <div class="mod-right"><span class="mod-time">${m.min} min</span>${pill}</div>
+     </div></div>`;}).join('');
+ return `<div class="page-head"><div><div class="page-title">My Learning Path</div><div class="page-sub">${ME.done.size} of ${MODULES.length} complete · about ${MODULES.reduce((a,m)=>a+m.min,0)} min total</div></div></div>${banner}<div class="mods">${rows}</div>`;
+}
+function openModule(i){if(moduleState(i)==='locked'){toast('Finish the previous module first');return;}CUR_MOD=i;VIEW='module';renderSidebar();renderView();window.scrollTo(0,0);}
+
+function vModule(){const m=MODULES[CUR_MOD];if(m.type==='quiz')return vQuiz();
+ return `<button class="btn btn-secondary" style="margin-bottom:18px" onclick="go('path')">← Back to path</button>
+  <div class="reader"><div style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-ink);margin-bottom:6px">Module ${CUR_MOD+1} of ${MODULES.length} · ${m.min} min</div>
+  <h2>${m.title}</h2><div class="r-sub">${m.sub}</div>${m.body}
+  <div class="reader-foot"><span class="page-sub">${ME.done.has(m.id)?'✓ You\'ve completed this module':'Read through, then mark it complete'}</span>
+  <button class="btn btn-primary btn-lg" onclick="completeModule()">${ME.done.has(m.id)?'Continue →':'Mark complete & continue →'}</button></div></div>`;
+}
+function completeModule(){const m=MODULES[CUR_MOD];ME.done.add(m.id);saveProgress(m.id,'done',null);
+ // advance to next available module, or back to path
+ const next=CUR_MOD+1;
+ if(next<MODULES.length){CUR_MOD=next;VIEW='module';toast('Module complete ✓');renderSidebar();renderView();window.scrollTo(0,0);}
+ else{VIEW='path';renderSidebar();renderView();}
+}
+
+/* ===================== QUIZ ===================== */
+let QZ={i:0,answers:[],answered:false,finished:false};
+function vQuiz(){
+ if(QZ.finished)return quizResult();
+ const total=QUIZ.length;const q=QUIZ[QZ.i];const picked=QZ.answers[QZ.i];
+ const opts=q.opts.map((o,k)=>{let cls='qz-opt';if(QZ.answered){if(k===q.a)cls+=' correct';else if(k===picked)cls+=' wrong';}
+   return `<button class="${cls}" ${QZ.answered?'disabled':''} onclick="pickAns(${k})">${o}</button>`;}).join('');
+ const fb=QZ.answered?`<div class="qz-fb ${picked===q.a?'ok':'no'}"><b>${picked===q.a?'Correct.':'Not quite.'}</b> ${q.ex}</div>`:'';
+ const nextBtn=QZ.answered?`<button class="btn btn-primary btn-lg" onclick="nextQ()">${QZ.i===total-1?'See results':'Next question →'}</button>`:'';
+ return `<button class="btn btn-secondary" style="margin-bottom:18px" onclick="quitQuiz()">← Back to path</button>
+  <div class="reader"><div class="qz-top"><div class="qz-prog"><span style="width:${(QZ.i)/total*100}%"></span></div><div class="qz-count">Question ${QZ.i+1} / ${total}</div></div>
+  <div class="qz-q">${q.q}</div>${opts}${fb}<div style="text-align:right;margin-top:16px">${nextBtn}</div></div>`;
+}
+function pickAns(k){if(QZ.answered)return;QZ.answers[QZ.i]=k;QZ.answered=true;renderView();}
+function nextQ(){if(QZ.i<QUIZ.length-1){QZ.i++;QZ.answered=QZ.answers[QZ.i]!==undefined;renderView();window.scrollTo(0,0);}else{finishQuiz();}}
+function finishQuiz(){const score=QZ.answers.reduce((a,ans,i)=>a+(ans===QUIZ[i].a?1:0),0);QZ.score=score;QZ.finished=true;
+ const pct=Math.round(score/QUIZ.length*100);const pass=score>=passMark;ME.quizBest=Math.max(ME.quizBest||0,pct);if(pass){ME.done.add('quiz');ME.certified=true;}saveProgress('quiz',pass?'done':'attempted',pct);renderView();window.scrollTo(0,0);}
+function quizResult(){const score=QZ.score;const pct=Math.round(score/QUIZ.length*100);const pass=score>=passMark;
+ return `<div class="reader qz-result"><div class="qz-score ${pass?'pass':'fail'}">${pct}%</div>
+  <div style="font-size:15px;color:var(--text2);margin:8px 0 4px">You scored ${score} of ${QUIZ.length} · pass mark is ${passMark}</div>
+  <div style="font-size:20px;font-weight:600;letter-spacing:-.02em;margin:14px 0 6px">${pass?'🎉 You passed — you\'re certified!':'Not quite there yet'}</div>
+  <p style="max-width:440px;margin:0 auto 22px;color:var(--text2);font-size:14px;line-height:1.55">${pass?'You\'re now cleared to run real Maple sessions. This result is recorded for the program team.':'Review the modules and try again — you can retake the check as many times as you need.'}</p>
+  ${pass?`<button class="btn btn-primary btn-lg" onclick="go('path')">Back to my path →</button>`:`<div style="display:flex;gap:10px;justify-content:center"><button class="btn btn-secondary btn-lg" onclick="go('path')">Review modules</button><button class="btn btn-primary btn-lg" onclick="retakeQuiz()">Retake the check</button></div>`}</div>`;
+}
+function retakeQuiz(){QZ={i:0,answers:[],answered:false,finished:false};renderView();window.scrollTo(0,0);}
+function quitQuiz(){QZ={i:0,answers:[],answered:false,finished:false};go('path');}
+
+/* ===================== RESOURCES ===================== */
+function vResources(){const items=[
+   ['📄','Moderator SOP','The full step-by-step run-of-session guide — keep it open during live sessions.','https://digitaltechedge.sharepoint.com/:w:/r/sites/Verdi_Juniper/Shared%20Documents/QA/For%20Moderator/Juniper_Moderator_SOP_v1.0.docx?d=wc6494b18c2ae45e4b4c28388e78c2cd6&amp;csf=1&amp;web=1&amp;e=aZOnbY'],
+   ['📘','Moderator Guide','The source-of-truth guidelines from the QA team.','https://digitaltechedge.sharepoint.com/:w:/r/sites/Verdi_Juniper/Shared%20Documents/QA/For%20Moderator/Juniper_Moderator_Guide_v1.0_20260720.docx?d=w7b52e00da8f04de99960bacdb000156b&amp;csf=1&amp;web=1&amp;e=C29hmL'],
+   ['🗣️','Topic & Prompt Bank','Topics and follow-ups, tagged to steer the English mix.','https://digitaltechedge.sharepoint.com/:w:/r/sites/Verdi_Juniper/Shared%20Documents/QA/For%20Moderator/Juniper_Topic_Prompt_Bank_v1.0_20260722.docx?d=w043cf7074f204896b2aa3cf8dad88a56&amp;csf=1&amp;web=1&amp;e=i1B73V'],
+   ['🛠️','Tooling Guide','Screens and steps for the OneForma recording room.','https://digitaltechedge.sharepoint.com/:w:/r/sites/Verdi_Juniper/Shared%20Documents/QA/For%20Moderator/Juniper_Tooling_Guide.docx?d=wab4e763951894d8ba04ebd47eec66648&amp;csf=1&amp;web=1&amp;e=GLwr7O'],
+   ['🎬','Session Walkthrough Recording','The full demo session, start to finish.','https://digitaltechedge.sharepoint.com/:v:/r/sites/Verdi_Juniper/Shared%20Documents/QA/For%20Moderator/Project%20Juniper%20-%20Moderator%20SOP%20_%20Tooling%20Guide-20260804_194821-Meeting%20Recording.mp4?d=w479783c017ce4573accf0d3023c43a28&amp;csf=1&amp;web=1&amp;e=UlqwSj']];
+ return `<div class="page-head"><div><div class="page-title">Resources</div><div class="page-sub">Your reference library — opens in SharePoint (Centific sign-in)</div></div></div>
+  ${items.map(it=>`<a class="mod-card" style="margin-bottom:12px;text-decoration:none;color:inherit" href="${it[3]}" target="_blank" rel="noopener"><div class="mod-ic">${it[0]}</div><div class="mod-meta"><div class="mod-name">${it[1]}</div><div class="mod-sub">${it[2]}</div></div><div class="mod-right"><span class="pill blue">Open ↗</span></div></a>`).join('')}`;
+}
+
+/* ===================== ADMIN: DASHBOARD ===================== */
+function cohortStats(){const s={not_started:0,in_progress:0,quiz_failed:0,certified:0};COHORT.forEach(m=>s[m.status]++);return s;}
+function vDash(){const s=cohortStats();const total=COHORT.length;
+ let list=COHORT.map((m,i)=>({...m,i}));
+ if(COHORT_FILTER==='attention')list=list.filter(m=>m.status==='quiz_failed');
+ else if(COHORT_FILTER==='active')list=list.filter(m=>m.status==='in_progress');
+ else if(COHORT_FILTER==='certified')list=list.filter(m=>m.status==='certified');
+ const rows=list.map(m=>{const pct=Math.round(m.done/MODULES.length*100);const sl=STAGE_LABEL[m.status];
+   return `<tr class="clickable" onclick="modDetail(${m.i})"><td><div style="display:flex;align-items:center;gap:10px"><span class="user-av" style="background:var(--accent)">${m.name[0]}</span><div><div style="font-weight:600">${m.name}</div><div style="font-size:11px;color:var(--text3)">${m.loc} · ${m.tz}</div></div></div></td>
+   <td style="min-width:130px"><div style="display:flex;align-items:center;gap:8px"><div class="mini-bar" style="flex:1"><span style="width:${pct}%"></span></div><span style="font-size:12px;color:var(--text3)">${m.done}/${MODULES.length}</span></div></td>
+   <td>${m.score!=null?`<b>${m.score}%</b>`:'<span style="color:var(--text3)">—</span>'}</td>
+   <td><span class="pill ${sl[1]}">${sl[0]}</span></td>
+   <td style="color:var(--text3);font-size:12px">${m.active}</td></tr>`;}).join('');
+ return `<div class="page-head"><div><div class="page-title">Cohort Dashboard</div><div class="page-sub">${total} moderators across ${new Set(COHORT.map(m=>m.loc)).size} locales · onboarding progress at a glance</div></div></div>
+  <div class="kpi-grid">
+   <div class="kpi accent"><div class="kpi-label">Enrolled</div><div class="kpi-num">${total}</div><div class="kpi-foot">in onboarding</div></div>
+   <div class="kpi blue"><div class="kpi-label">In progress</div><div class="kpi-num">${s.in_progress}</div><div class="kpi-foot">working through it</div></div>
+   <div class="kpi green"><div class="kpi-label">Certified</div><div class="kpi-num">${s.certified}</div><div class="kpi-foot">cleared for production</div></div>
+   <div class="kpi amber"><div class="kpi-label">Needs attention</div><div class="kpi-num">${s.quiz_failed}</div><div class="kpi-foot">didn't pass the check</div></div>
+  </div>
+  <div class="panel-grid">
+   <div class="panel"><div class="panel-head"><div class="panel-title">Moderators</div>
+     <div class="seg"><button class="${COHORT_FILTER==='all'?'active':''}" onclick="setFilter('all')">All</button><button class="${COHORT_FILTER==='active'?'active':''}" onclick="setFilter('active')">In progress</button><button class="${COHORT_FILTER==='attention'?'active':''}" onclick="setFilter('attention')">Attention</button><button class="${COHORT_FILTER==='certified'?'active':''}" onclick="setFilter('certified')">Certified</button></div></div>
+     <table class="tbl"><thead><tr><th>Moderator</th><th>Progress</th><th>Quiz</th><th>Status</th><th>Last active</th></tr></thead><tbody>${rows||'<tr><td colspan="5" class="page-sub">No one in this view.</td></tr>'}</tbody></table></div>
+   <div class="panel"><div class="panel-head"><div class="panel-title">Status breakdown</div></div><canvas id="chStatus" height="200"></canvas>
+     <div style="margin-top:16px"><div class="panel-title" style="font-size:14px;margin-bottom:10px">Where people are in the path</div><canvas id="chStage" height="150"></canvas></div></div>
+  </div>`;
+}
+function setFilter(f){COHORT_FILTER=f;renderView();}
+function modDetail(i){const m=COHORT[i];const pct=Math.round(m.done/MODULES.length*100);const sl=STAGE_LABEL[m.status];
+ const rows=MODULES.map((mod,k)=>{const done=k<m.done;return `<div class="detail-row"><div class="d-ic ${done?'done':'pend'}">${done?'✓':k+1}</div><div style="flex:1">${mod.title}</div><span class="pill ${done?'done':'locked'}">${done?'Done':'Pending'}</span></div>`;}).join('');
+ openModal(`<div class="modal-head"><div><div style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-ink)">${m.loc} · ${m.tz}</div><div class="modal-title">${m.name}</div></div><button class="modal-close" onclick="closeModal()">✕</button></div>
+  <div style="display:flex;gap:10px;margin-bottom:16px"><span class="pill ${sl[1]}">${sl[0]}</span>${m.score!=null?`<span class="pill ${m.score>=passMark*10?'done':'red'}">Quiz ${m.score}%</span>`:''}<span class="page-sub" style="margin:0">Last active ${m.active}</span></div>
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px"><div class="mini-bar" style="flex:1"><span style="width:${pct}%"></span></div><span style="font-size:13px;color:var(--text2)">${m.done}/${MODULES.length} modules</span></div>
+  <div style="font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text3);margin-bottom:6px">Module progress</div>${rows}
+  <div style="display:flex;gap:10px;margin-top:20px">${m.status==='certified'?`<button class="btn btn-primary" style="flex:1" onclick="toast('Would add ${m.name.split(' ')[0]} to OneForma (demo)');closeModal()">Add to OneForma →</button>`:`<button class="btn btn-secondary" style="flex:1" onclick="toast('Reminder sent (demo)');closeModal()">Send a nudge</button>`}</div>`);
+}
+
+/* ===================== ADMIN: CURRICULUM ===================== */
+function vCurriculum(){return `<div class="page-head"><div><div class="page-title">Curriculum</div><div class="page-sub">${MODULES.length} modules · what every moderator works through</div></div><button class="btn btn-secondary" onclick="toast('Editing modules — full build')">Edit modules</button></div>
+  <div class="mods">${MODULES.map((m,i)=>`<div class="mod"><div class="mod-rail"><div class="mod-dot ${m.type==='quiz'?'active':''}">${m.type==='quiz'?'✓':i+1}</div>${i<MODULES.length-1?'<div class="mod-line"></div>':''}</div>
+    <div class="mod-card" style="cursor:default"><div class="mod-ic">${m.ic}</div><div class="mod-meta"><div class="mod-name">${m.title}</div><div class="mod-sub">${m.sub}</div></div><div class="mod-right"><span class="mod-time">${m.min} min</span>${m.type==='quiz'?'<span class="pill amber">Graded</span>':'<span class="pill blue">Module</span>'}</div></div></div>`).join('')}</div>
+  <div class="panel"><div class="panel-head"><div class="panel-title">Knowledge check</div><span class="pill amber">Pass mark ${Math.round(PASS_PCT*100)}%</span></div><p class="page-sub" style="margin:0">${QUIZ.length} scenario questions drawn from the modules. A moderator must score ${passMark}/${QUIZ.length} or higher to be certified and cleared for production.</p></div>`;
+}
+
+/* ===================== CHARTS ===================== */
+let _ch=[];
+function drawCharts(){if(typeof Chart==='undefined')return;_ch.forEach(c=>{try{c.destroy();}catch(e){}});_ch=[];const dark=document.documentElement.getAttribute('data-theme')==='dark';Chart.defaults.font.family="-apple-system,'SF Pro Display',sans-serif";Chart.defaults.color=dark?'#a8a8b2':'#8a8a8e';const grid=dark?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.05)';const s=cohortStats();
+ const c1=document.getElementById('chStatus');if(c1)_ch.push(new Chart(c1,{type:'doughnut',data:{labels:['Certified','In progress','Not started','Needs attention'],datasets:[{data:[s.certified,s.in_progress,s.not_started,s.quiz_failed],backgroundColor:['#22c55e','#3b82f6','#77777f','#F59E0B'],borderWidth:0}]},options:{cutout:'62%',plugins:{legend:{position:'bottom',labels:{padding:12,font:{size:11},usePointStyle:true}}}}}));
+ const c2=document.getElementById('chStage');if(c2){const counts=MODULES.map((m,i)=>COHORT.filter(x=>x.done>i).length);_ch.push(new Chart(c2,{type:'bar',data:{labels:MODULES.map((m,i)=>'M'+(i+1)),datasets:[{data:counts,backgroundColor:'#D9772E',borderRadius:5}]},options:{plugins:{legend:{display:false},tooltip:{callbacks:{title:(t)=>MODULES[t[0].dataIndex].title,label:(t)=>t.raw+' reached this module'}}},scales:{y:{grid:{color:grid},ticks:{precision:0,stepSize:2}},x:{grid:{display:false}}}}}));}
+}
+
+/* ===================== MODAL / MISC ===================== */
+function openModal(h){document.getElementById('modal').innerHTML=h;document.getElementById('modalBg').classList.add('show');}
+function closeModal(){document.getElementById('modalBg').classList.remove('show');}
+function toggleTheme(){const h=document.documentElement;h.setAttribute('data-theme',h.getAttribute('data-theme')==='dark'?'light':'dark');if(VIEW==='dash')setTimeout(drawCharts,50);}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(window._tt);window._tt=setTimeout(()=>t.classList.remove('show'),2600);}
+
+/* preload directory/progress (demo data if URLs are placeholders) */
+loadData();
+</script>
+</body>
+</html>
