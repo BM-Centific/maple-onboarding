@@ -361,9 +361,9 @@ const passMark=Math.ceil(QUIZ.length*PASS_PCT);
    Moderators table, progress loads/saves to the Progress table, and the
    dashboard shows the real cohort. */
 const BACKEND={
-  getDirectory:'https://default9b415834803a4da0afdcfe6b1d52d6.49.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/04/workflows/f58f6bac30a54c608df6473e25567c7e/triggers/manual/paths/invoke?api-version=1',
-  getProgress :'https://default9b415834803a4da0afdcfe6b1d52d6.49.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/27/workflows/864949e064b94592b4a6b9f8cdf2b3af/triggers/manual/paths/invoke?api-version=1',
-  saveProgress:'https://default9b415834803a4da0afdcfe6b1d52d6.49.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/11/workflows/3de0f0c9d945434da87ad17adbcf734f/triggers/manual/paths/invoke?api-version=1'
+  getDirectory:'https://default9b415834803a4da0afdcfe6b1d52d6.49.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/04/workflows/f58f6bac30a54c608df6473e25567c7e/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=LpXYj4NCr6O9UkQ6MgJ3kNbDA3LMjRHyCQ77R1T-Xw0',
+  getProgress :'https://default9b415834803a4da0afdcfe6b1d52d6.49.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/27/workflows/864949e064b94592b4a6b9f8cdf2b3af/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=isJDsy_LKKoEVfydO0CXH0qCXcY4BCIsRrLbPxBPFxA',
+  saveProgress:'https://default9b415834803a4da0afdcfe6b1d52d6.49.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/11/workflows/3de0f0c9d945434da87ad17adbcf734f/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=goY-b2eSwU0wY8JikA420i466_0DMAUIivoCRLQWeWc'
 };
 const LIVE=/^https?:\/\//.test(BACKEND.getDirectory);
 const PASS80=Math.round(PASS_PCT*100);
