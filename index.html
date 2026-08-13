@@ -179,6 +179,11 @@ nav{position:sticky;top:0;z-index:200;height:52px;background:var(--nav-bg);backd
 .flag{font-size:11px;font-weight:600;color:var(--text2);}
 
 .seg{display:inline-flex;gap:3px;background:var(--bg3);border:.5px solid var(--border);border-radius:11px;padding:3px;}
+.locale-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+.locale-chip{font-size:12px;font-weight:600;padding:6px 12px;border-radius:20px;background:var(--bg3);border:.5px solid var(--border-strong);color:var(--text2);transition:all .18s;}
+.locale-chip:hover{background:var(--bg4);color:var(--text);}
+.locale-chip.active{background:var(--accent-soft);color:var(--accent-ink);border-color:var(--accent);}
+
 .seg button{padding:7px 13px;border-radius:8px;font-size:13px;font-weight:500;color:var(--text2);transition:all .18s;}
 .seg button.active{background:var(--bg2);color:var(--text);font-weight:600;box-shadow:0 1px 6px rgba(0,0,0,.1);}
 
@@ -263,6 +268,100 @@ function renderCodeswitchExamples(loc){
   const dirAttr=rtl?' dir="rtl"':'';
   return `<ul><li><b>Intra-sentential \u2014 the pattern we require.</b> The switch happens <b>inside</b> a sentence or clause: <span${dirAttr}>"${ex.intra.line}"</span> ${ex.intra.note} Every valid recording needs some of this.</li><li><b>Inter-sentential \u2014 allowed, but not enough on its own.</b> One sentence in the primary language, the next in English: <span${dirAttr}>"${ex.inter.line}"</span> ${ex.inter.note}</li></ul>
    <div class="callout warn"><span class="c-ic">\u26A0</span><span class="c-tx">A conversation that only ever switches <i>between</i> sentences \u2014 never <i>within</i> one \u2014 does not meet the bar.</span></div>`;
+}
+// ---- Per-module question bank ----
+const MOD_QUESTIONS={
+ welcome:[
+  {q:'What is the primary goal of the code-switching program?',opts:['Train moderators on Microsoft Teams','Collect natural bilingual conversations to train speech-recognition (ASR) systems','Build a participant directory for OneForma','Test microphone quality across devices'],a:1},
+  {q:'What is a moderator\'s role in a session?',opts:['Record their own voice as a sample','Guide the conversation, record takes, QA recordings, and close the session','Transcribe the audio after the session','Sign up participants via OneForma'],a:1}
+ ],
+ codeswitch:[
+  {q:'Which switching pattern is required in every valid recording?',opts:['Inter-sentential only — one sentence in each language','Intra-sentential — switching inside a sentence or clause','Alternating sentences with no English phrases','Any pattern as long as English appears somewhere'],a:1},
+  {q:'A participant says "computer" mid-sentence in their native language. Is this code-switching?',opts:['Yes — any English word counts','No — it\'s a loanword, not a real code-switch','Only if they say it with an English accent','Yes, but only if it\'s longer than one syllable'],a:1},
+  {q:'Roughly what percentage of the conversation should be in English?',opts:['25–30%, evenly spread','5% or less','10–15%, spread naturally throughout','50%, alternating sentences'],a:2}
+ ],
+ quality:[
+  {q:'A take runs for 2 minutes 45 seconds with excellent audio. What is the verdict?',opts:['Pass — audio quality is what matters','Weak Pass — short but usable','Fail — under the 3-minute minimum','It depends on how much English was used'],a:2},
+  {q:'A speaker\'s language level doesn\'t match what they declared at recruitment. What do you do?',opts:['Continue and flag it in QA notes','Stop the session and book a different speaker','Lower the quality bar for that session','Mark the take Weak Pass and submit'],a:1},
+  {q:'What makes switching "forced" rather than natural?',opts:['Using English words that are common loanwords','Switching mid-sentence','Switching on cue, reading from a list, or using an affected accent','Switching more than once per minute'],a:2}
+ ],
+ tool:[
+  {q:'Where do you go to check and update your availability and timezone?',opts:['My Board → Edit Profile','Operation → Sessions → your session card','Operation → Moderators → select yourself','Dashboard → Settings → Availability'],a:2},
+  {q:'How much notice should you give before changing your availability?',opts:['No notice needed — changes take effect immediately','At least 30 minutes before the session','At least 2 days in advance','24 hours is fine'],a:2}
+ ],
+ session:[
+  {q:'You\'ve ended the call. Is the session closed?',opts:['Yes — ending the call automatically closes it','No — you must also go to Operation → Sessions and click Close Session','Only if all QA is submitted first','Yes, as long as all participants left'],a:1},
+  {q:'What is the practice-takes gate?',opts:['You must run exactly two practice takes, no more','Recording starts automatically after two takes','You must not start real recording until both participants demonstrate natural switching','Practice takes are optional if participants seem confident'],a:2},
+  {q:'A participant hasn\'t used English for over a minute. What do you do?',opts:['Unmute and ask them to switch to English','Stop and re-record the take immediately','Send a text-chat nudge steering the next follow-up toward an English-heavy topic','End the session'],a:2}
+ ],
+ technique:[
+  {q:'What is the right way to guide participants toward more English use?',opts:['Ask them directly to say more English words','Pick topics that naturally pull English out, like work or technology','Tell them the English target and ask them to count','Pause the recording and give verbal feedback'],a:1},
+  {q:'When should you stop and re-record rather than send a nudge?',opts:['When the audio sounds slightly quiet','When a real name or PII is spoken on the recording','When one speaker is talking more than the other','When the pace of conversation slows down'],a:1}
+ ],
+ walkthrough:[
+  {q:'What is the walkthrough video designed to show?',opts:['How to set up your Centific account','The full click-by-click session flow in the real OneForma tool','A comparison of Maple and Juniper platforms','How to fill out your timesheet in Samay'],a:1},
+  {q:'What should you have open alongside the walkthrough video?',opts:['The participant confirmation email template','The Moderator SOP','A blank timesheet','The Topic & Prompt Bank only'],a:1}
+ ],
+ privacy:[
+  {q:'A participant says their real first name during a recording. What should you do?',opts:['Nothing — first names are not PII','Note it in the QA comments and pass the file','Stop and re-record — real identifiers fail QA','Only flag it if they also give their last name'],a:2},
+  {q:'What name do participants appear under in the recording room?',opts:['Their legal name as registered in OneForma','Their Centific vendor ID','The alias they chose at sign-up','Their email address'],a:2}
+ ],
+ centific:[
+  {q:'Where should all project communication happen?',opts:['Personal email or WhatsApp for speed','Your Centific email, OneForma, and MS Teams only','Any channel the participant prefers','Slack or Discord for informal updates'],a:1},
+  {q:'A participant asks about their pay rate. What do you do?',opts:['Tell them the rate from the job posting','Negotiate based on session quality','Direct them to the job posting — never quote or negotiate rates yourself','Ask your PM and get back to them'],a:2}
+ ]
+};
+
+// ---- Per-module inline quiz state ----
+let MOD_QZ={qIdx:0, answers:{}, flagged:{}};
+
+function modQuestions(id){return MOD_QUESTIONS[id]||[];}
+function modQzComplete(id){const qs=modQuestions(id);if(!qs.length)return true;return qs.every((_,i)=>MOD_QZ.answers[id+'_'+i]!==undefined);}
+function modQzScore(id){const qs=modQuestions(id);if(!qs.length)return null;const correct=qs.filter((q,i)=>MOD_QZ.answers[id+'_'+i]===q.a).length;return Math.round(correct/qs.length*100);}
+function resetModQz(id){const qs=modQuestions(id);qs.forEach((_,i)=>{delete MOD_QZ.answers[id+'_'+i];delete MOD_QZ.flagged[id+'_'+i];});MOD_QZ.qIdx=0;}
+
+function pickAnswer(id,qIdx,chosen){
+  const qs=modQuestions(id); const q=qs[qIdx];
+  if(MOD_QZ.answers[id+'_'+qIdx]!==undefined)return; // already answered
+  MOD_QZ.answers[id+'_'+qIdx]=chosen;
+  if(chosen!==q.a)MOD_QZ.flagged[id+'_'+qIdx]=true;
+  renderView();
+  // auto-advance after brief delay if not last question
+  if(qIdx<qs.length-1){setTimeout(()=>{MOD_QZ.qIdx=qIdx+1;renderView();},900);}
+}
+function qzNav(id,dir){
+  const qs=modQuestions(id);
+  MOD_QZ.qIdx=Math.max(0,Math.min(qs.length-1,MOD_QZ.qIdx+dir));
+  renderView();window.scrollTo(0,0);
+}
+
+function renderModQz(id){
+  const qs=modQuestions(id); if(!qs.length)return '';
+  const idx=MOD_QZ.qIdx; const q=qs[idx];
+  const answered=MOD_QZ.answers[id+'_'+idx]!==undefined;
+  const chosen=MOD_QZ.answers[id+'_'+idx];
+  const allDone=modQzComplete(id);
+  const doneCount=qs.filter((_,i)=>MOD_QZ.answers[id+'_'+i]!==undefined).length;
+
+  const opts=q.opts.map((o,k)=>{
+    let cls='qz-opt';
+    if(answered){if(k===q.a)cls+=' correct';else if(k===chosen)cls+=' wrong';}
+    return `<button class="${cls}" ${answered?'disabled':''} onclick="pickAnswer('${id}',${idx},${k})">${o}</button>`;
+  }).join('');
+
+  const fb=answered&&chosen!==q.a?`<div class="qz-fb no"><b>Not quite.</b> The correct answer is highlighted above.</div>`:'';
+  const nav=`<div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px">
+    <button class="btn btn-secondary" style="padding:8px 14px;font-size:13px" ${idx===0?'disabled':''} onclick="qzNav('${id}',-1)">← Prev</button>
+    <span style="font-size:12px;color:var(--text3)">${doneCount}/${qs.length} answered</span>
+    <button class="btn btn-secondary" style="padding:8px 14px;font-size:13px" ${idx===qs.length-1?'disabled':''} onclick="qzNav('${id}',1)">Next →</button>
+  </div>`;
+  const status=allDone?`<div style="font-size:12px;font-weight:600;color:var(--green);margin-top:8px;text-align:center">\u2713 All questions answered — you can continue</div>`
+    :`<div style="font-size:12px;color:var(--text3);margin-top:8px;text-align:center">Answer all questions to continue</div>`;
+  return `<div style="margin:24px 0;background:var(--bg3);border:.5px solid var(--border-strong);border-radius:14px;padding:18px 20px">
+    <div style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-ink);margin-bottom:10px">Module check \u00b7 Question ${idx+1} of ${qs.length}</div>
+    <div class="qz-q" style="font-size:16px;margin-bottom:14px">${q.q}</div>
+    ${opts}${fb}${nav}${status}
+  </div>`;
 }
 const MODULES=[
  {id:'welcome',ic:'👋',title:'Welcome to Project Maple',sub:'What we\'re building and your role',min:5,type:'content',body:`
@@ -420,27 +519,10 @@ const MODULES=[
 
    <h3>Confidentiality &amp; how we work</h3>
    <ul><li>All project materials — the SOP, guides, topic bank — are <b>Centific Confidential</b>. Don’t share them outside the team.</li><li>Protect participant privacy: aliases only, and no real names or personal details in a recording.</li><li>Be reliable — join on time, honour your scheduled sessions, and give notice as early as you can if you can’t make one.</li></ul>
-   <div class="callout"><span class="c-ic">◆</span><span class="c-tx">This section will grow as we add the exact timesheet steps and any other admin tasks the program team shares.</span></div>`},
- {id:'articulate',ic:'🎓',title:'Full Learning Module (Articulate)',sub:'Complete the official course before the knowledge check',min:20,type:'content',body:`
-   <p>Before the knowledge check, complete the full <b>Articulate learning module</b> — it covers the program in more depth than these summaries and is required before you move on.</p>
-   <div class="callout"><span class="c-ic">▶</span><span class="c-tx">Opens in a new tab. Work through it fully, then come back here.</span></div>
-   <p style="text-align:center;margin:18px 0"><a href="https://360.articulate.com/review/content/f657a6ec-5e30-4c62-a02d-74532bcb504e/review" target="_blank" rel="noopener" class="btn btn-primary" style="text-decoration:none;display:inline-block;padding:12px 26px">Open the Learning Module ↗</a></p>
-   <div class="callout warn"><span class="c-ic">⚠</span><span class="c-tx">Completing this module is on the honor system — please actually go through it. Click <b>Mark complete & continue</b> below once you’ve finished.</span></div>`},
- {id:'quiz',ic:'✅',title:'Knowledge Check',sub:'Pass to be cleared for production',min:10,type:'quiz'}
+   <div class="callout"><span class="c-ic">◆</span><span class="c-tx">This section will grow as we add the exact timesheet steps and any other admin tasks the program team shares.</span></div>`}
+
 ];
 
-const QUIZ=[
- {q:'Roughly how much of the conversation should be in English?',opts:['About 40–50%','About 10–15%, spread throughout','As much as possible','It doesn\'t matter'],a:1,ex:'Aim for ~10–15% English, spread across the conversation rather than clustered.'},
- {q:'A participant reads English words from a list you gave them. What do you do?',opts:['Let it go — English is English','Stop and re-record — that\'s forced switching','Ask for more English words','Mark it Weak Pass'],a:1,ex:'Switching read from a list is forced/scripted. Stop and re-record; never supply word lists.'},
- {q:'A recording comes out to 2 minutes 40 seconds. In QA, this is…',opts:['A Pass','A Weak Pass','A Fail — under the 3-minute minimum','Fine if the audio is clear'],a:2,ex:'Conversations must be 3–30 minutes. Under 3 minutes fails the length check.'},
- {q:'During a take, one participant hasn\'t used any English for about a minute. Best move?',opts:['Stop and re-record the take','Unmute and ask them to use English','Send a text-chat nudge steering the next follow-up toward an English-heavy topic','End the session'],a:2,ex:'This is a nudge situation, not a redo. Steer with the chat — never request English directly.'},
- {q:'A participant says their real full name on the recording. What happens?',opts:['Nothing — names are fine','It\'s PII — stop and re-record','Ask them to spell it','Only a problem if it\'s a last name'],a:1,ex:'Real names are personal identifiers (PII). Stop and re-record.'},
- {q:'Can you speak out loud to guide participants during a take?',opts:['Yes, quietly','Yes, between sentences','No — stay muted and use text chat; stop the take if you must step in','Only to fix audio'],a:2,ex:'Your voice on a speaker\'s channel is grounds for rejection. Stay muted; steer via chat.'},
- {q:'After two practice takes, participants still switch on cue and it sounds scripted. Do you start the real recording?',opts:['Yes — two practice takes is the rule','No — keep practicing until switching sounds natural','Yes, but mark it Weak Pass','Record one and decide later'],a:1,ex:'The practice gate: don\'t record real takes until switching is genuinely natural. Two is the minimum, not a cap.'},
- {q:'How do you QA the recordings after a session?',opts:['Email the files to your PM','Open Recording Review → Media Files, review each Draft, and answer the 13 QA questions','Just listen once and mark Pass','QA isn\'t part of the moderator\'s job'],a:1,ex:'You QA in Recording Review: review each Draft file and answer all 13 checklist questions, then Pass / Weak Pass / Fail.'},
- {q:'You\'ve ended the call at the end of a session. Is anything else required?',opts:['No, ending the call is enough','Yes — go to Operation → Sessions and Close Session','Only if there were reshoots','Restart the room'],a:1,ex:'Ending the call isn\'t the same as closing. Always Close Session so it doesn\'t stay "In progress."'},
- {q:'Are cameras used during a Maple session?',opts:['Yes, always on','Yes, but only the moderator\'s','No — sessions are audio only','Optional per participant'],a:2,ex:'There are no cameras in the current build — sessions are audio only.'}
-];
 const PASS_PCT=0.8;
 
 // mock cohort for the admin dashboard
@@ -464,11 +546,10 @@ let COHORT=[];
 const STAGE_LABEL={not_started:['Not started','locked'],in_progress:['In progress','blue'],quiz_failed:['Quiz not passed','red'],certified:['Certified','done']};
 
 /* ===================== STATE ===================== */
-let ROLE='moderator',VIEW='path',CUR_MOD=0,COHORT_FILTER='all';
+let ROLE='moderator',VIEW='path',CUR_MOD=0,COHORT_FILTER='all',LOCALE_FILTER='all';
 // current learner progress (starts fresh so the demo can be experienced live)
 const ME={name:'Alex Moderator',email:'',loc:'',tz:'',done:new Set(),quizBest:null,certified:false};
 const contentIds=MODULES.filter(m=>m.type==='content').map(m=>m.id);
-const passMark=Math.ceil(QUIZ.length*PASS_PCT);
 
 /* ================= BACKEND (Excel + Power Automate) =================
    Paste your three Power Automate flow URLs below. While they stay as
@@ -557,23 +638,29 @@ function vPath(){
      </div></div>`;}).join('');
  return `<div class="page-head"><div><div class="page-title">My Learning Path</div><div class="page-sub">${ME.done.size} of ${MODULES.length} complete · about ${MODULES.reduce((a,m)=>a+m.min,0)} min total</div></div></div>${banner}<div class="mods">${rows}</div>`;
 }
-function openModule(i){if(moduleState(i)==='locked'){toast('Finish the previous module first');return;}CUR_MOD=i;VIEW='module';renderSidebar();renderView();window.scrollTo(0,0);}
+function openModule(i){if(moduleState(i)==='locked'){toast('Finish the previous module first');return;}CUR_MOD=i;MOD_QZ.qIdx=0;VIEW='module';renderSidebar();renderView();window.scrollTo(0,0);}
 
 function vModule(){const m=MODULES[CUR_MOD];if(m.type==='quiz')return vQuiz();
  const prevBtn=CUR_MOD>0?`<button class="btn btn-secondary btn-lg" onclick="prevModule()">← Previous module</button>`:'';
- // Locale-specific content is injected live here (at render time, after login) —
- // module bodies are baked into MODULES at page load, before ME.loc is known, so
- // this substitution can't happen inside the template literal itself.
  let bodyHtml=m.body;
  if(m.id==='codeswitch'){bodyHtml=bodyHtml.replace('{{CODESWITCH_EXAMPLES}}',renderCodeswitchExamples(ME.loc));}
+ const qzHtml=renderModQz(m.id);
+ const qzDone=modQzComplete(m.id);
+ const alreadyDone=ME.done.has(m.id);
+ const canContinue=alreadyDone||qzDone;
+ const continueBtn=canContinue
+  ?`<button class="btn btn-primary btn-lg" onclick="completeModule()">${alreadyDone?'Continue →':'Mark complete & continue →'}</button>`
+  :`<button class="btn btn-primary btn-lg" disabled title="Answer all module questions to continue">Answer questions to continue</button>`;
  return `<button class="btn btn-secondary" style="margin-bottom:18px" onclick="go('path')">← Back to path</button>
   <div class="reader"><div style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-ink);margin-bottom:6px">Module ${CUR_MOD+1} of ${MODULES.length} · ${m.min} min</div>
-  <h2>${m.title}</h2><div class="r-sub">${m.sub}</div>${bodyHtml}
-  <div class="reader-foot"><span class="page-sub">${ME.done.has(m.id)?'✓ You\'ve completed this module':'Read through, then mark it complete'}</span>
-  <div style="display:flex;gap:10px">${prevBtn}<button class="btn btn-primary btn-lg" onclick="completeModule()">${ME.done.has(m.id)?'Continue →':'Mark complete & continue →'}</button></div></div></div>`;
+  <h2>${m.title}</h2><div class="r-sub">${m.sub}</div>${bodyHtml}${qzHtml}
+  <div class="reader-foot"><span class="page-sub">${alreadyDone?'✓ You\'ve completed this module':qzDone?'All questions answered — mark it complete':'Read through and answer the module questions'}</span>
+  <div style="display:flex;gap:10px">${prevBtn}${continueBtn}</div></div></div>`;
 }
-function prevModule(){if(CUR_MOD>0){CUR_MOD--;renderSidebar();renderView();window.scrollTo(0,0);}}
+function prevModule(){if(CUR_MOD>0){CUR_MOD--;MOD_QZ.qIdx=0;renderSidebar();renderView();window.scrollTo(0,0);}}
 function completeModule(){const m=MODULES[CUR_MOD];ME.done.add(m.id);saveProgress(m.id,'done',null);
+ const sc=modQzScore(m.id);if(sc!==null){saveProgress(m.id+'_quiz','done',sc);}
+ MOD_QZ.qIdx=0;
  // advance to next available module, or back to path
  const next=CUR_MOD+1;
  if(next<MODULES.length){CUR_MOD=next;VIEW='module';toast('Module complete ✓');renderSidebar();renderView();window.scrollTo(0,0);}
@@ -581,31 +668,7 @@ function completeModule(){const m=MODULES[CUR_MOD];ME.done.add(m.id);saveProgres
 }
 
 /* ===================== QUIZ ===================== */
-let QZ={i:0,answers:[],answered:false,finished:false};
-function vQuiz(){
- if(QZ.finished)return quizResult();
- const total=QUIZ.length;const q=QUIZ[QZ.i];const picked=QZ.answers[QZ.i];
- const opts=q.opts.map((o,k)=>{let cls='qz-opt';if(QZ.answered){if(k===q.a)cls+=' correct';else if(k===picked)cls+=' wrong';}
-   return `<button class="${cls}" ${QZ.answered?'disabled':''} onclick="pickAns(${k})">${o}</button>`;}).join('');
- const fb=QZ.answered?`<div class="qz-fb ${picked===q.a?'ok':'no'}"><b>${picked===q.a?'Correct.':'Not quite.'}</b> ${q.ex}</div>`:'';
- const nextBtn=QZ.answered?`<button class="btn btn-primary btn-lg" onclick="nextQ()">${QZ.i===total-1?'See results':'Next question →'}</button>`:'';
- return `<button class="btn btn-secondary" style="margin-bottom:18px" onclick="quitQuiz()">← Back to path</button>
-  <div class="reader"><div class="qz-top"><div class="qz-prog"><span style="width:${(QZ.i)/total*100}%"></span></div><div class="qz-count">Question ${QZ.i+1} / ${total}</div></div>
-  <div class="qz-q">${q.q}</div>${opts}${fb}<div style="text-align:right;margin-top:16px">${nextBtn}</div></div>`;
-}
-function pickAns(k){if(QZ.answered)return;QZ.answers[QZ.i]=k;QZ.answered=true;renderView();}
-function nextQ(){if(QZ.i<QUIZ.length-1){QZ.i++;QZ.answered=QZ.answers[QZ.i]!==undefined;renderView();window.scrollTo(0,0);}else{finishQuiz();}}
-function finishQuiz(){const score=QZ.answers.reduce((a,ans,i)=>a+(ans===QUIZ[i].a?1:0),0);QZ.score=score;QZ.finished=true;
- const pct=Math.round(score/QUIZ.length*100);const pass=score>=passMark;ME.quizBest=Math.max(ME.quizBest||0,pct);if(pass){ME.done.add('quiz');ME.certified=true;}saveProgress('quiz',pass?'done':'attempted',pct);renderView();window.scrollTo(0,0);}
-function quizResult(){const score=QZ.score;const pct=Math.round(score/QUIZ.length*100);const pass=score>=passMark;
- return `<div class="reader qz-result"><div class="qz-score ${pass?'pass':'fail'}">${pct}%</div>
-  <div style="font-size:15px;color:var(--text2);margin:8px 0 4px">You scored ${score} of ${QUIZ.length} · pass mark is ${passMark}</div>
-  <div style="font-size:20px;font-weight:600;letter-spacing:-.02em;margin:14px 0 6px">${pass?'🎉 You passed — you\'re certified!':'Not quite there yet'}</div>
-  <p style="max-width:440px;margin:0 auto 22px;color:var(--text2);font-size:14px;line-height:1.55">${pass?'You\'re now cleared to run real Maple sessions. This result is recorded for the program team.':'Review the modules and try again — you can retake the check as many times as you need.'}</p>
-  ${pass?`<button class="btn btn-primary btn-lg" onclick="go('path')">Back to my path →</button>`:`<div style="display:flex;gap:10px;justify-content:center"><button class="btn btn-secondary btn-lg" onclick="go('path')">Review modules</button><button class="btn btn-primary btn-lg" onclick="retakeQuiz()">Retake the check</button></div>`}</div>`;
-}
-function retakeQuiz(){QZ={i:0,answers:[],answered:false,finished:false};renderView();window.scrollTo(0,0);}
-function quitQuiz(){QZ={i:0,answers:[],answered:false,finished:false};go('path');}
+// per-module inline quiz handled by MOD_QZ
 
 /* ===================== RESOURCES ===================== */
 function vResources(){const items=[
@@ -621,17 +684,23 @@ function vResources(){const items=[
 /* ===================== ADMIN: DASHBOARD ===================== */
 function cohortStats(){const s={not_started:0,in_progress:0,quiz_failed:0,certified:0};COHORT.forEach(m=>s[m.status]++);return s;}
 function vDash(){const s=cohortStats();const total=COHORT.length;
+ const locales=Array.from(new Set(COHORT.map(m=>m.loc))).sort();
  let list=COHORT.map((m,i)=>({...m,i}));
  if(COHORT_FILTER==='attention')list=list.filter(m=>m.status==='quiz_failed');
  else if(COHORT_FILTER==='active')list=list.filter(m=>m.status==='in_progress');
  else if(COHORT_FILTER==='certified')list=list.filter(m=>m.status==='certified');
+ if(LOCALE_FILTER!=='all')list=list.filter(m=>m.loc===LOCALE_FILTER);
+ const localeChips=`<div class="locale-chips">
+   <button class="locale-chip ${LOCALE_FILTER==='all'?'active':''}" onclick="setLocaleFilter('all')">All locales · ${total}</button>
+   ${locales.map(loc=>{const n=COHORT.filter(m=>m.loc===loc).length;return `<button class="locale-chip ${LOCALE_FILTER===loc?'active':''}" onclick="setLocaleFilter('${loc}')">${loc} · ${n}</button>`;}).join('')}
+ </div>`;
  const rows=list.map(m=>{const pct=Math.round(m.done/MODULES.length*100);const sl=STAGE_LABEL[m.status];
    return `<tr class="clickable" onclick="modDetail(${m.i})"><td><div style="display:flex;align-items:center;gap:10px"><span class="user-av" style="background:var(--accent)">${m.name[0]}</span><div><div style="font-weight:600">${m.name}</div><div style="font-size:11px;color:var(--text3)">${m.loc} · ${m.tz}</div></div></div></td>
    <td style="min-width:130px"><div style="display:flex;align-items:center;gap:8px"><div class="mini-bar" style="flex:1"><span style="width:${pct}%"></span></div><span style="font-size:12px;color:var(--text3)">${m.done}/${MODULES.length}</span></div></td>
    <td>${m.score!=null?`<b>${m.score}%</b>`:'<span style="color:var(--text3)">—</span>'}</td>
    <td><span class="pill ${sl[1]}">${sl[0]}</span></td>
    <td style="color:var(--text3);font-size:12px">${m.active}</td></tr>`;}).join('');
- return `<div class="page-head"><div><div class="page-title">Cohort Dashboard</div><div class="page-sub">${total} moderators across ${new Set(COHORT.map(m=>m.loc)).size} locales · onboarding progress at a glance</div></div></div>
+ return `<div class="page-head"><div><div class="page-title">Cohort Dashboard</div><div class="page-sub">${total} moderators across ${locales.length} locales · onboarding progress at a glance</div></div></div>
   <div class="kpi-grid">
    <div class="kpi accent"><div class="kpi-label">Enrolled</div><div class="kpi-num">${total}</div><div class="kpi-foot">in onboarding</div></div>
    <div class="kpi blue"><div class="kpi-label">In progress</div><div class="kpi-num">${s.in_progress}</div><div class="kpi-foot">working through it</div></div>
@@ -641,12 +710,14 @@ function vDash(){const s=cohortStats();const total=COHORT.length;
   <div class="panel-grid">
    <div class="panel"><div class="panel-head"><div class="panel-title">Moderators</div>
      <div class="seg"><button class="${COHORT_FILTER==='all'?'active':''}" onclick="setFilter('all')">All</button><button class="${COHORT_FILTER==='active'?'active':''}" onclick="setFilter('active')">In progress</button><button class="${COHORT_FILTER==='attention'?'active':''}" onclick="setFilter('attention')">Attention</button><button class="${COHORT_FILTER==='certified'?'active':''}" onclick="setFilter('certified')">Certified</button></div></div>
+     ${localeChips}
      <table class="tbl"><thead><tr><th>Moderator</th><th>Progress</th><th>Quiz</th><th>Status</th><th>Last active</th></tr></thead><tbody>${rows||'<tr><td colspan="5" class="page-sub">No one in this view.</td></tr>'}</tbody></table></div>
    <div class="panel"><div class="panel-head"><div class="panel-title">Status breakdown</div></div><canvas id="chStatus" height="200"></canvas>
      <div style="margin-top:16px"><div class="panel-title" style="font-size:14px;margin-bottom:10px">Where people are in the path</div><canvas id="chStage" height="150"></canvas></div></div>
   </div>`;
 }
 function setFilter(f){COHORT_FILTER=f;renderView();}
+function setLocaleFilter(loc){LOCALE_FILTER=loc;renderView();}
 function modDetail(i){const m=COHORT[i];const pct=Math.round(m.done/MODULES.length*100);const sl=STAGE_LABEL[m.status];
  const rows=MODULES.map((mod,k)=>{const done=k<m.done;return `<div class="detail-row"><div class="d-ic ${done?'done':'pend'}">${done?'✓':k+1}</div><div style="flex:1">${mod.title}</div><span class="pill ${done?'done':'locked'}">${done?'Done':'Pending'}</span></div>`;}).join('');
  openModal(`<div class="modal-head"><div><div style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-ink)">${m.loc} · ${m.tz}</div><div class="modal-title">${m.name}</div></div><button class="modal-close" onclick="closeModal()">✕</button></div>
