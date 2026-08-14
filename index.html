@@ -204,6 +204,7 @@ nav{position:sticky;top:0;z-index:200;height:52px;background:var(--nav-bg);backd
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
 @keyframes fade{from{opacity:0;}to{opacity:1;}}
+.plain-ol{list-style-type:decimal;padding-left:22px;}.plain-ol li{margin-bottom:6px;}
 .shot{margin:16px 0;text-align:center;}
 .shot img{max-width:100%;border-radius:10px;border:.5px solid var(--border-strong);box-shadow:var(--shadow-sm);}
 .shot-cap{font-size:12px;color:var(--text3);margin-top:6px;font-style:italic;}
@@ -224,6 +225,8 @@ nav{position:sticky;top:0;z-index:200;height:52px;background:var(--nav-bg);backd
     <div id="lgErr" class="lg-err"></div>
     <button class="lg-go" onclick="doLogin()">Continue →</button>
     <div class="lg-hint">Moderators land in their learning path; program admins land in the cohort dashboard — no need to choose.</div>
+    <div class="lg-demo">Demo shortcuts: <button onclick="demoLogin('moderator')">enter as moderator</button> · <button onclick="demoLogin('admin')">enter as admin</button></div>
+    <div style="text-align:center;margin-top:8px;font-size:10px;color:var(--text3);letter-spacing:.04em">v0.8 · demo build</div>
 
   </div>
 </div>
@@ -282,7 +285,7 @@ const MOD_QUESTIONS={
  ],
  quality:[
   {q:'A take runs for 2 minutes 45 seconds with excellent audio. What is the verdict?',opts:['Pass — audio quality is what matters','Weak Pass — short but usable','Fail — under the 3-minute minimum','It depends on how much English was used'],a:2},
-  {q:'A speaker\'s language level doesn\'t match what they declared at recruitment. What do you do?',opts:['Continue and flag it in QA notes','Stop the session and book a different speaker','Lower the quality bar for that session','Mark the take Weak Pass and submit'],a:1},
+  {q:'A speaker\'s language level doesn\'t match what they declared at recruitment. What do you do?',opts:['Continue and flag it in QA notes','Stop the session and let participants know they\'ll be rescheduled','Lower the quality bar for that session','Mark the take Weak Pass and submit'],a:1},
   {q:'What makes switching "forced" rather than natural?',opts:['Using English words that are common loanwords','Switching mid-sentence','Switching on cue, reading from a list, or using an affected accent','Switching more than once per minute'],a:2}
  ],
  tool:[
@@ -300,11 +303,52 @@ const MOD_QUESTIONS={
  ],
  walkthrough:[
   {q:'What is the walkthrough video designed to show?',opts:['How to set up your Centific account','The full click-by-click session flow in the real OneForma tool','A comparison of Maple and Juniper platforms','How to fill out your timesheet in Samay'],a:1},
-  {q:'What should you have open alongside the walkthrough video?',opts:['The participant confirmation email template','The Moderator SOP','A blank timesheet','The Topic & Prompt Bank only'],a:1}
+  {q:'What should you have open for reference while watching the walkthrough video and conducting sessions?',opts:['The participant confirmation email template','The Moderator SOP','A blank timesheet','The Topic & Prompt Bank only'],a:1}
  ],
  privacy:[
   {q:'A participant says their real first name during a recording. What should you do?',opts:['Nothing — first names are not PII','Note it in the QA comments and pass the file','Stop and re-record — real identifiers fail QA','Only flag it if they also give their last name'],a:2},
   {q:'What name do participants appear under in the recording room?',opts:['Their legal name as registered in OneForma','Their Centific vendor ID','The alias they chose at sign-up','Their email address'],a:2}
+ ],
+ contacts:[
+  {q:'A participant asks about their pay rate during a session. What do you do?',opts:['Tell them the rate from your job posting','Negotiate based on the session quality','Direct them to the job posting — never quote or negotiate rates yourself','Ask your PM and get back to them during the session'],a:2},
+  {q:'A technical issue comes up mid-session that you can\'t resolve. What\'s the right move?',opts:['End the session immediately','Try to fix it yourself before flagging anyone','Flag it in the Teams channel and keep the session moving if you can','Ask the participant to fix their own device'],a:1}
+ ],
+ rep_centific:[
+  {q:'A participant asks who the client is. What do you say?',opts:['Name the client honestly','Centific runs data collection for a range of partners — the specific partner is confidential','Ignore the question and move on','Tell them to check their registration email'],a:1},
+  {q:'Who should join the recording room first?',opts:['Participants — they set up before you arrive','You join first. Participants should never wait in an empty room','It doesn\'t matter','Both join at the same time'],a:1}
+ ],
+ rep_expectations:[
+  {q:'Can you tell participants the target English ratio during briefing?',opts:['Yes, so they know what to aim for','No — never mention a ratio or instruct them to switch languages','Only if they ask directly','Yes, for Maple but not other projects'],a:1},
+  {q:'A participant asks about payment before the session. You can tell them:',opts:['Nothing — that\'s outside your scope','They\'re paid per session via Tremendous, about 5 business days after completion','An exact figure from the job posting','Only tell them after the session'],a:1}
+ ],
+ rep_comms:[
+  {q:'A participant struggles to follow your English instruction. What do you do first?',opts:['Repeat the same sentence more slowly','Switch to their language since you speak it','Put the instruction in the chat and rephrase in simpler English','End the session'],a:2},
+  {q:'How many chat corrections to the same participant before you stop the take?',opts:['As many as needed','Five','Three — after that, stop the take and speak','One'],a:2}
+ ],
+ scripts_journey:[
+  {q:'A participant says they didn\'t read the welcome materials. You should:',opts:['End the session — they\'re unprepared','Give them the short version: shape of the session, no prep needed','Tell them to read it before you start','Skip the briefing to save time'],a:1},
+  {q:'A participant wants to stop mid-session. What do you do?',opts:['Try to persuade them to finish for the full rate','Say they can stop immediately — no explanation needed — and never use payment as leverage for staying','Explain they\'ll be paid less so they can decide','Ask them to finish the current take first'],a:1}
+ ],
+ scripts_pressure:[
+  {q:'A participant asks to hear a playback of their recording. You say:',opts:['Sure, let me find the file','I\'m not able to play anything back — recordings go straight into a secure workflow','Only after the session is fully closed','Let me check with the team first'],a:1},
+  {q:'You notice a third voice audible in a participant\'s environment. What do you do?',opts:['Continue — one stray voice probably won\'t affect QA','Ask if anyone else is in the room; if so, ask them to find somewhere private','Stop the session entirely','Note it in the session log and carry on'],a:1},
+  {q:'A participant appears intoxicated. What\'s the right call?',opts:['Continue — it\'s not your place to judge','End the session immediately without explaining, then escalate to your project owner','Ask them directly if they\'ve been drinking','Give them a break and resume later'],a:1}
+ ],
+ contacts_full:[
+  {q:'During a live session something goes seriously wrong. What\'s your first move?',opts:['Email your project manager','Call the participant\'s emergency contact','Use the MS Teams moderator channel — the team monitors it during sessions','Wait until after the session to report'],a:2},
+  {q:'A participant asks about withdrawing consent and deleting their recording. You:',opts:['Walk them through the withdrawal process yourself','Route them to DC_Project_US@centific.com','Tell them it\'s not possible','Contact your project owner to decide'],a:1}
+ ],
+ session_log:[
+  {q:'A session is cut short due to a participant issue. Do you still file a session log?',opts:['No — only completed sessions need a log','Yes — every session including cancelled or cut-short ones','Only if you had to escalate','Only if the client requests it'],a:1},
+  {q:'How should you describe a participant who appeared intoxicated in a session log?',opts:['\"Participant appeared drunk\"','Neutral observable behavior only — e.g. speech was notably slurred and responses were non-sequiturs','\"Participant was intoxicated\"','No need to document — just escalate verbally'],a:1}
+ ],
+ centific_works:[
+  {q:'You work with Centific. Who is your employer?',opts:['Centific — you work on their platform','Your agency — Centific directs the work, your agency holds your contract and pays you','OneForma — they process your sessions','Both Centific and your agency equally'],a:1},
+  {q:'A participant on LinkedIn asks: \'Where do you work?\' How do you describe this role?',opts:['Say you work at Centific as a Data Collection Moderator','List your agency as your employer and describe the work as conducted on behalf of Centific','Say you\'re self-employed','Don\'t mention Centific at all'],a:1}
+ ],
+ hours_pay:[
+  {q:'Does your onboarding training time count as paid time?',opts:['No — only live session work is paid','Yes — from the moment you reached this app; log it in Samay against your PID','Only if it takes more than an hour','Ask your PM'],a:1},
+  {q:'Who actually pays you — Centific or your agency?',opts:['Centific pays you directly at month end','Your agency pays you — Centific approves and reports your hours; your agency issues payment','OneForma processes payment','Tremendous pays you directly'],a:1}
  ],
  centific:[
   {q:'Where should all project communication happen?',opts:['Personal email or WhatsApp for speed','Your Centific email, OneForma, and MS Teams only','Any channel the participant prefers','Slack or Discord for informal updates'],a:1},
@@ -322,17 +366,48 @@ function resetModQz(id){const qs=modQuestions(id);qs.forEach((_,i)=>{delete MOD_
 
 function pickAnswer(id,qIdx,chosen){
   const qs=modQuestions(id); const q=qs[qIdx];
-  if(MOD_QZ.answers[id+'_'+qIdx]!==undefined)return; // already answered
+  if(MOD_QZ.answers[id+'_'+qIdx]!==undefined)return;
   MOD_QZ.answers[id+'_'+qIdx]=chosen;
   if(chosen!==q.a)MOD_QZ.flagged[id+'_'+qIdx]=true;
-  renderView();
-  // auto-advance after brief delay if not last question
-  if(qIdx<qs.length-1){setTimeout(()=>{MOD_QZ.qIdx=qIdx+1;renderView();},900);}
+
+  // --- targeted DOM update (no scroll-resetting renderView) ---
+  q.opts.forEach((_,k)=>{
+    const btn=document.getElementById('mqzopt_'+id+'_'+qIdx+'_'+k);
+    if(!btn)return;
+    btn.disabled=true;
+    btn.className='qz-opt'+(k===q.a?' correct':(k===chosen?' wrong':''));
+  });
+  const fb=document.getElementById('mqzfb_'+id+'_'+qIdx);
+  if(fb&&chosen!==q.a){fb.className='qz-fb no';fb.innerHTML='<b>Not quite.</b> The correct answer is highlighted above.';}
+
+  // update count + status + continue button
+  const doneCount=qs.filter((_,i)=>MOD_QZ.answers[id+'_'+i]!==undefined).length;
+  const cntEl=document.getElementById('mqzcnt_'+id);
+  if(cntEl)cntEl.textContent=doneCount+'/'+qs.length+' answered';
+  const allDone=modQzComplete(id);
+  const statusEl=document.getElementById('mqzstatus_'+id);
+  if(statusEl&&allDone){statusEl.style.color='var(--green)';statusEl.style.fontWeight='600';statusEl.textContent='\u2713 All questions answered \u2014 you can continue';}
+
+  // unlock Continue button without re-rendering page
+  if(allDone){
+    const btns=document.querySelectorAll('.reader-foot button[disabled]');
+    btns.forEach(b=>{if(b.title==='Answer all module questions to continue'){b.disabled=false;b.title='';b.textContent='Mark complete & continue \u2192';}});
+  }
+
+  // auto-advance to next question (re-renders just the quiz card area via qzNav)
+  if(qIdx<qs.length-1){setTimeout(()=>{MOD_QZ.qIdx=qIdx+1;_refreshQzCard(id);},900);}
+}
+
+function _refreshQzCard(id){
+  // replaces only the quiz card, not the whole page — no scroll reset
+  const card=document.querySelector('.reader [style*="margin:24px 0"]');
+  if(card){const tmp=document.createElement('div');tmp.innerHTML=renderModQz(id);const newCard=tmp.firstElementChild;if(newCard)card.replaceWith(newCard);}
+  else{renderView();} // fallback
 }
 function qzNav(id,dir){
   const qs=modQuestions(id);
   MOD_QZ.qIdx=Math.max(0,Math.min(qs.length-1,MOD_QZ.qIdx+dir));
-  renderView();window.scrollTo(0,0);
+  _refreshQzCard(id);
 }
 
 function renderModQz(id){
@@ -346,17 +421,18 @@ function renderModQz(id){
   const opts=q.opts.map((o,k)=>{
     let cls='qz-opt';
     if(answered){if(k===q.a)cls+=' correct';else if(k===chosen)cls+=' wrong';}
-    return `<button class="${cls}" ${answered?'disabled':''} onclick="pickAnswer('${id}',${idx},${k})">${o}</button>`;
+    return `<button id="mqzopt_${id}_${idx}_${k}" class="${cls}" ${answered?'disabled':''} onclick="pickAnswer('${id}',${idx},${k})">${o}</button>`;
   }).join('');
 
-  const fb=answered&&chosen!==q.a?`<div class="qz-fb no"><b>Not quite.</b> The correct answer is highlighted above.</div>`:'';
+  const fb=answered&&chosen!==q.a?`<div id="mqzfb_${id}_${idx}" class="qz-fb no"><b>Not quite.</b> The correct answer is highlighted above.</div>`
+    :`<div id="mqzfb_${id}_${idx}"></div>`;
   const nav=`<div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px">
     <button class="btn btn-secondary" style="padding:8px 14px;font-size:13px" ${idx===0?'disabled':''} onclick="qzNav('${id}',-1)">← Prev</button>
-    <span style="font-size:12px;color:var(--text3)">${doneCount}/${qs.length} answered</span>
+    <span id="mqzcnt_${id}" style="font-size:12px;color:var(--text3)">${doneCount}/${qs.length} answered</span>
     <button class="btn btn-secondary" style="padding:8px 14px;font-size:13px" ${idx===qs.length-1?'disabled':''} onclick="qzNav('${id}',1)">Next →</button>
   </div>`;
-  const status=allDone?`<div style="font-size:12px;font-weight:600;color:var(--green);margin-top:8px;text-align:center">\u2713 All questions answered — you can continue</div>`
-    :`<div style="font-size:12px;color:var(--text3);margin-top:8px;text-align:center">Answer all questions to continue</div>`;
+  const status=allDone?`<div id="mqzstatus_${id}" style="font-size:12px;font-weight:600;color:var(--green);margin-top:8px;text-align:center">\u2713 All questions answered — you can continue</div>`
+    :`<div id="mqzstatus_${id}" style="font-size:12px;color:var(--text3);margin-top:8px;text-align:center">Answer all questions to continue</div>`;
   return `<div style="margin:24px 0;background:var(--bg3);border:.5px solid var(--border-strong);border-radius:14px;padding:18px 20px">
     <div style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-ink);margin-bottom:10px">Module check \u00b7 Question ${idx+1} of ${qs.length}</div>
     <div class="qz-q" style="font-size:16px;margin-bottom:14px">${q.q}</div>
@@ -393,7 +469,7 @@ const MODULES=[
    <h3>Your in-session QA \u2014 the 13 checks</h3>
    <p>After each take you answer <b>13 Yes/No questions</b> in Recording Review \u2014 covering audio, natural and within-sentence switching, balance, duration, silences, third languages, and PII. They map directly to the reject bar above. <b>All Yes</b> unlocks Pass / Weak Pass; a <b>single No</b> means Fail. (The exact wording lives in the Moderator SOP.)</p>
    <div class="callout warn"><span class="c-ic">\u26A0</span><span class="c-tx">When you\u2019re unsure, <b>re-record rather than pass</b>. A rejected file costs one take; a bad file that slips through costs the dataset.</span></div>
-   <div class="callout"><span class="c-ic">\u2139</span><span class="c-tx">A speaker mismatch is different from a bad take \u2014 if someone\u2019s primary-language level, English level, or demographics don\u2019t match what was declared at recruitment, <b>end the session and book a different speaker</b> rather than trying to re-record around it.</span></div>`},
+   <div class="callout"><span class="c-ic">\u2139</span><span class="c-tx">A speaker mismatch is different from a bad take \u2014 if someone\u2019s primary-language level, English level, or demographics don\u2019t match what was declared at recruitment, <b>end the session and let participants know they’ll be rescheduled</b> — don’t try to re-record around it.</span></div>`},
  {id:'tool',ic:'🛠️',title:'The OneForma Recording Tool',sub:'Access the tool, check your profile, and find your session',min:8,type:'content',body:`
    <p>Before you can run a session, get into the tool and confirm your own details are set up right.</p>
 
@@ -500,26 +576,259 @@ const MODULES=[
    <h3>Conduct</h3>
    <ul><li>Be respectful and calm; give feedback only between takes.</li><li>Stay muted during takes — your voice on a channel is a rejection.</li></ul>
    <div class="callout"><span class="c-ic">✓</span><span class="c-tx">Next up: the <b>knowledge check</b>. It pulls from everything above — pass it and you're cleared for production.</span></div>`},
- {id:'centific',ic:'🏢',title:'Working at Centific',sub:'Accounts, hours, pay, greeting participants, and how we work',min:6,type:'content',body:`
-   <h3>Your accounts &amp; channels</h3>
-   <ul><li>Use your <b>Centific email</b> for all project communication — never a personal address.</li><li>Everything happens across <b>OneForma</b> (where your sessions live), <b>Centific email</b>, and <b>MS Teams</b> — the team watches Teams during sessions so you can flag issues live.</li><li>You’ll be set up with a OneForma account and a participant/vendor ID once you’re certified.</li></ul>
+ 
+ {id:'rep_centific',ic:'🏢',title:'Representing Centific',sub:'How you show up — in sessions, in chat, and everywhere else',min:6,type:'content',body:`
+   <p>For most participants, you are the only Centific person they will ever meet. Their entire impression of this company is you, on a screen, for two to three hours.</p>
 
-   <h3>Representing Centific & greeting participants</h3>
-   <ul><li>You're often the only Centific contact a participant meets — be warm, clear, and professional from the moment they join.</li><li>Greet both participants by their alias, thank them for joining, and briefly explain what happens next before you start.</li><li>Keep a calm, friendly tone throughout — if something goes wrong (audio issues, a confused participant), stay patient and solve it via chat rather than sounding frustrated.</li><li>Represent Centific professionally in every channel — OneForma, email, and Teams — not just during live sessions.</li></ul>
-   <div class="callout"><span class="c-ic">◆</span><span class="c-tx">More detail on tone and specific participant scenarios is coming from the program team — this section will expand once that’s in.</span></div>
+   <h3>The virtual handshake</h3>
+   <p>You can't shake hands, so signal professionalism the way the online format allows:</p>
+   <ul><li><b>Wear a professional shirt.</b> Business casual is expected.</li>
+   <li><b>Have your Centific ID badge visible on camera.</b></li>
+   <li><b>Introduce yourself by name</b> and as a Centific moderator.</li>
+   <li><b>Be framed and lit</b> so participants can see your face clearly.</li>
+   <li><b>Join the room before your participants do.</b> Never make them wait in an empty room.</li></ul>
 
-   <h3>Your availability</h3>
-   <p>You manage your own working hours, timezone, and leave dates in the tool (see the <b>Setting & Changing Your Availability</b> section of the OneForma Recording Tool module). <b>Give at least 2 days’ notice</b> for any change — last-minute changes can leave a scheduled session without a moderator.</p>
+   <h3>Introducing yourself</h3>
+   <p>Use your <b>real first name</b>, and open with a line like this:</p>
+   <div class="callout"><span class="c-ic">&#x201C;</span><span class="c-tx"><i>"Hi, I'm [name]. I'll be moderating this data capture session on behalf of Centific."</i></span></div>
+   <p><b>"On behalf of Centific"</b> is the right phrasing. Your agency is your employer, and describing it any other way is inaccurate — Module 8 covers this fully. Participants are using aliases; you are not. This is deliberate: you are the accountable professional in the room, and participants are protected contributors.</p>
 
-   <h3>Logging your hours</h3>
-   <ul><li>Record your actual working hours in the Centific timesheet system (<b>Samay</b>) each day — including onboarding time.</li><li><span style="color:var(--text3)">[Placeholder: exact Samay steps, screenshots, and any other admin tasks are coming from our PM and will be added here.]</span></li></ul>
+   <h3>The client is confidential</h3>
+   <p>You do not name the client to participants. You do not describe their industry. You do not speculate about what the data will be used for. If a participant asks who the client is:</p>
+   <div class="callout"><span class="c-ic">\u201c</span><span class="c-tx"><i>Centific runs data collection for a range of partners, and the specific partner is confidential.</i></span></div>
+   <p>You'll work through scripts covering exactly what to say in these situations in a later module.</p>
 
-   <h3>Getting paid</h3>
-   <ul><li>Your rate and payment terms are on the <b>job posting</b> — that’s the authoritative source. Don’t rely on figures shared verbally, and don’t quote or negotiate rates with participants.</li><li>Complete each session in the time allotted; incomplete sessions can affect compensation.</li></ul>
+   <h3>Every channel, not just live sessions</h3>
+   <p>You represent Centific in OneForma, in Centific email, and in MS Teams. The same professional standard applies when you're posting a question in a moderator channel at 11pm as when you're on a call with participants.</p>`},
 
-   <h3>Confidentiality &amp; how we work</h3>
-   <ul><li>All project materials — the SOP, guides, topic bank — are <b>Centific Confidential</b>. Don’t share them outside the team.</li><li>Protect participant privacy: aliases only, and no real names or personal details in a recording.</li><li>Be reliable — join on time, honour your scheduled sessions, and give notice as early as you can if you can’t make one.</li></ul>
-   <div class="callout"><span class="c-ic">◆</span><span class="c-tx">This section will grow as we add the exact timesheet steps and any other admin tasks the program team shares.</span></div>`}
+ {id:'rep_expectations',ic:'📋',title:'Setting Expectations with Participants',sub:'Brief them fully before the first recording — it makes everything easier',min:6,type:'content',body:`
+   <p>Setting expectations before you capture anything is the highest-leverage thing you do all session. An informed participant performs better, needs fewer retakes, and leaves satisfied.</p>
+
+   <h3>Lay out the roadmap</h3>
+   <p>Before the first recording, walk both participants through the shape of the session so nothing comes as a surprise:</p>
+   <ol class="plain-ol"><li>We'll do some practice runs first. These aren't kept; they exist so you get comfortable.</li>
+   <li>Then a short real recording, about ten minutes.</li>
+   <li>Then a longer conversation, around thirty minutes.</li>
+   <li>Then one or two shorter ones on different topics.</li>
+   <li>Between recordings I may ask us to redo one. That's normal and it's never a comment on you.</li></ol>
+
+   <h3>What you can — and can't — describe</h3>
+   <p>You can describe what happens in the session: they'll have normal conversations, the audio is recorded, unscripted and relaxed matters more than being "correct." For Maple you can say that naturally mixing English into the conversation is welcome. <b>You never instruct them to switch languages, and you never mention a ratio.</b></p>
+
+   <h3>What the participant leaves with</h3>
+   <p>By the end, every participant should know:</p>
+   <ul><li>Their recordings were submitted successfully.</li>
+   <li>When and how they'll be paid (see below).</li>
+   <li>Who to contact afterward: <span style="background:var(--amber-bg);color:var(--amber-text);font-weight:700;padding:1px 6px;border-radius:4px;font-size:13px">{{PROJECT_EMAIL}}</span></li>
+   <li>That they won't receive or review copies of the recordings.</li></ul>
+   <p><b>Thank them explicitly, by alias, at the close.</b> They've given you two to three hours of unscripted personal conversation. That contribution matters — say so.</p>
+
+   <h3>Participant payment — what you may tell them</h3>
+   <ul><li><b>Basis:</b> paid per session.</li>
+   <li><b>Full rate:</b> if they stay for the entire session.</li>
+   <li><b>If they drop early:</b> prorated to actual recording time completed. Practice takes don't count if they drop early.</li>
+   <li><b>Method:</b> Tremendous.</li>
+   <li><b>Timing:</b> 5 business days after the session completes.</li>
+   <li><b>Terms:</b> per the agreement signed at OneForma registration.</li></ul>
+   <p>You are empowered to state these facts. You are not responsible for managing payment. Answer the question, then route anything further to <span style="background:var(--amber-bg);color:var(--amber-text);font-weight:700;padding:1px 6px;border-radius:4px;font-size:13px">{{PROJECT_EMAIL}}</span>. <b>Never quote a figure, never promise an exact deposit date, never offer to chase a payment personally.</b></p>`},
+
+ {id:'rep_comms',ic:'💬',title:'Communicating During the Session',sub:'Staying muted, using chat, and steering the conversation',min:8,type:'content',body:`
+   <p><b>Your voice is not the data. Theirs is.</b></p>
+   <p>While a take is running, you stay muted. The recording is two participants talking to each other — your voice on will necessitate a retake. Everything you say aloud happens <i>between</i> takes.</p>
+
+   <h3>You speak English — always</h3>
+   <p>Whatever language the session is recorded in, and whatever your locale assignment, you address participants in English. Your locale assignment is for matching and tracking, not for setting the language you speak. When someone struggles to follow, you never switch languages. Instead:</p>
+   <ol><li><b>Put it in the chat.</b> Written English is easier to process than spoken English for most non-native readers, and the message stays on screen so they can re-read it.</li>
+   <li><b>Rephrase, don't repeat.</b> Saying the same sentence more slowly rarely helps. Say a simpler, different sentence.</li>
+   <li><b>One idea per sentence.</b></li>
+   <li><b>Check by asking them to say it back</b> — not "does that make sense?" which almost everyone answers yes to regardless.</li></ol>
+
+   <h3>The text chat</h3>
+   <p><b>One-way.</b> You can send to one participant or both. They cannot reply to you, and they cannot use it to reach each other. Each participant has their own private thread — they can't see what you sent the other person. Messages persist and are kept — write knowing a message sent in the first ten minutes is still readable two hours later.</p>
+   <div class="callout warn"><span class="c-ic">\u26A0</span><span class="c-tx"><b>Three rules for the chat:</b><br>1. 500 characters is a ceiling, not a target — roughly ten words. If you need more, stop the take and speak.<br>2. Don't stack corrections — three corrections to the same person means stop the take and talk.<br>3. Never type a participant's real name. If someone slips, send: <i>"Aliases please"</i> — never type the name to correct it.</span></div>
+
+   <h3>Steering the conversation</h3>
+   <p>You're not a passive recorder. Track who's dominating, when energy flags, when a topic has run dry. Move before the recording suffers. If a participant looks uncertain or answers as though they misheard, stop and restate. A confused participant produces an unusable take.</p>
+   <p>When unsure, re-record. A rejected file costs one take. A bad file that slips through costs the dataset.</p>`},
+
+ {id:'scripts_journey',ic:'📜',title:'Scripts: The Participant Journey',sub:'Ready-to-use scripts for common situations — welcome to close',min:8,type:'content',body:`
+   <p>These scripts cover the most common situations you'll encounter. Use the exact words or adapt them — but make sure every key point is covered.</p>
+
+   <h3>4.1 · Welcoming a nervous participant</h3>
+   <p><i>Situation: a participant joins sounding anxious — they've never done this.</i></p>
+   <div class="callout"><span class="c-ic">\u201c</span><span class="c-tx"><i>"You're in exactly the right place — welcome. I'm [name], and I'll be with you both the whole way. There's no such thing as getting this wrong. We'll do some practice runs first that nobody keeps, so by the time we're actually recording it'll already feel familiar."</i></span></div>
+   <p><b>If they press — "what if I say something wrong?"</b></p>
+   <div class="callout"><span class="c-ic">\u201c</span><span class="c-tx"><i>"There's nothing to get wrong. We're interested in how people actually talk to each other. Not performing, just chatting. And we can stop and go again any time."</i></span></div>
+   <p style="color:var(--text3);font-size:13px"><b>Don't:</b> start setup with no reassurance · pressure a hesitant participant · hint at the client.</p>
+
+   <h3>4.2 · Orienting an unprepared participant</h3>
+   <p><i>Situation: a participant admits they didn't read the welcome materials.</i></p>
+   <div class="callout"><span class="c-ic">\u201c</span><span class="c-tx"><i>"No problem at all. Here's the short version: you two are going to have some normal conversations while I record the audio. That's genuinely it. We'll warm up with a few practice runs I don't keep, then a short one about ten minutes, then a longer one around thirty, then one or two shorter ones on different topics. I'll suggest topics as we go. You don't need anything prepared."</i></span></div>
+   <p>Before you record, confirm they completed registration and consent at OneForma. If anything is outstanding, don't start the session — route them to <span style="background:var(--amber-bg);color:var(--amber-text);font-weight:700;padding:1px 6px;border-radius:4px;font-size:13px">{{PROJECT_EMAIL}}</span>.</p>
+   <p style="color:var(--text3);font-size:13px"><b>Don't:</b> make them feel judged · describe client specifications or ratios · skip the roadmap because you're behind.</p>
+
+   <h3>4.3 · Adapting for language level or accessibility needs</h3>
+   <p><i>Situation: a participant genuinely struggles to follow you, or has an accessibility need.</i></p>
+   <div class="callout"><span class="c-ic">\u201c</span><span class="c-tx"><i>"Let's slow right down. I'll say it again a different way — stop me any time, there's no rush at all."</i></span></div>
+   <p>Then work the toolkit from the Communicating During Sessions module: chat first, rephrase, shorten, confirm by asking them to say it back. <b>Don't switch to their language</b>, even if you speak it.</p>
+   <p style="color:var(--text3);font-size:13px"><b>Note:</b> if someone genuinely cannot follow English at the level declared at recruitment, that's Script 4.5, not this.</p>
+
+   <h3>4.4 · Payment questions before the session</h3>
+   <p><i>Situation: a participant asks how and when they'll be paid.</i></p>
+   <div class="callout"><span class="c-ic">\u201c</span><span class="c-tx"><i>"You're paid per session, through Tremendous, about five business days after we finish today. It's all in the agreement you signed when you registered. Stay for the full session and you get the full session rate."</i></span></div>
+   <p style="color:var(--text3);font-size:13px"><b>Don't:</b> quote a figure · promise an exact deposit date · take on responsibility for chasing a problem.</p>
+
+   <h3>4.5 · Speaker mismatch</h3>
+   <p><i>Situation: mid-session, a participant's language level or demographics don't match what they declared.</i></p>
+   <div class="callout"><span class="c-ic">\u201c</span><span class="c-tx"><i>"Let me pause us here for a moment — I want to check something on my end."</i></span></div>
+   <p>Then close the session courteously, without diagnosing the mismatch to them. A speaker mismatch is not a bad take — don't record around it. End the session and escalate to <span style="background:var(--amber-bg);color:var(--amber-text);font-weight:700;padding:1px 6px;border-radius:4px;font-size:13px">your Project Manager</span> the same day so the slot can be rebooked.</p>
+
+   <h3>4.6 · Payment questions after the session</h3>
+   <p><i>Situation: the session is done and a participant asks when the money arrives.</i></p>
+   <div class="callout"><span class="c-ic">\u201c</span><span class="c-tx"><i>"Five business days, through Tremendous. If it hasn't landed after that, email <span style="background:var(--amber-bg);color:var(--amber-text);font-weight:700;padding:1px 6px;border-radius:4px;font-size:13px">{{PROJECT_EMAIL}}</span> and they'll chase it. That's not something I can do from my end, but they can."</i></span></div>
+   <p>Read their payment email back to confirm the spelling — it's cheap and prevents an entire category of problem.</p>`},
+
+ {id:'scripts_pressure',ic:'🚧',title:'Scripts: Pressure & Boundaries',sub:'What to say when things get difficult',min:9,type:'content',body:`
+   <h3>5.1 · Questions about the client or data use</h3>
+   <p><i>Situation: a participant asks who's behind this, how their recordings will be used, or who sees them.</i></p>
+   <div class="callout"><span class="c-ic">&#x201C;</span><span class="c-tx"><i>"Fair question, and I'm not able to name the company. How the recordings get used and who has access to them is all set out in the consent form you signed when you registered, so that's the best place to look. If you want more detail than what's in there, email DC_Project_US@centific.com and they'll answer it properly."</i></span></div>
+   <p>You do not need to restate the terms of the consent form, and you do not need to explain what the client needs the data for. The participant already has the document that answers this, and the DC email covers anything it doesn't.</p>
+   <p style="color:var(--text3);font-size:13px"><b>Don't:</b> name or guess at the client · restate or interpret the consent form · volunteer explanations of what the client wants the data for.</p>
+   <h3>5.2 · Technical problems and waiting</h3>
+   <div class="callout"><span class="c-ic">\u201c</span><span class="c-tx"><i>"Sorry about the wait — that's on our end, not yours, and I appreciate your patience. Nothing you did caused it."</i><br><br><i>"This doesn't cost you anything. As long as we get through the session, you're paid the full session rate. Troubleshooting doesn't count against you."</i></span></div>
+   <p style="color:var(--text3);font-size:13px"><b>Don't:</b> get defensive · offer compensation to smooth it over · push ahead when quality is compromised.</p>
+
+   <h3>5.3 · Mid-take intervention — text or stop</h3>
+   <p>Decide which tool fits. Text can steer; it cannot explain and it cannot ask a question. If a situation requires more than ~10 words — stop the take.</p>
+   <ul><li><b>One person dominating:</b> "Let [alias] take the next turn" → to that speaker only</li>
+   <li><b>Someone gone quiet:</b> "Jump in whenever — no rush" → to that speaker only</li>
+   <li><b>Drifting toward real names:</b> "Aliases please" → to that speaker only</li>
+   <li><b>Energy flagging:</b> "Try: [topic]" → both</li>
+   <li><b>Sounds recited or formal:</b> "Relax — just chat" → both</li>
+   <li><b>Long silence:</b> "Keep going, this is good" → both</li></ul>
+   <p><b>When to stop instead of text:</b> doorbell, alarm, third voice, anything that will fail QA — stop first, then explain:</p>
+   <div class="callout"><span class="c-ic">\u201c</span><span class="c-tx"><i>"Let's grab that one again — I picked up some background noise. Nothing to do with the conversation, that was going really well. Let's pick up around where you were talking about [topic]."</i></span></div>
+
+   <h3>5.4 · A participant wants to stop</h3>
+   <div class="callout"><span class="c-ic">\u201c</span><span class="c-tx"><i>"Absolutely. You can stop at any time, and that's completely okay. No explanation needed."</i></span></div>
+   <p>If they ask about payment: <i>"It's based on the recording time we actually completed, so it'd be prorated rather than the full session rate. For exactly what that works out to, <span style="background:var(--amber-bg);color:var(--amber-text);font-weight:700;padding:1px 6px;border-radius:4px;font-size:13px">{{PROJECT_EMAIL}}</span> is the right place. But please don't let that change what you decide. If you want to stop, we stop."</i></p>
+   <p><b>Never use payment as an argument for staying.</b> If they don't ask about pay, don't raise it.</p>
+
+   <h3>5.5 · A participant negotiates scope</h3>
+   <div class="callout"><span class="c-ic">\u201c</span><span class="c-tx"><i>"I hear you. Let's keep it moving. Each conversation is part of what makes this usable, so I can't drop them. But I can keep us efficient, and we can take a short break whenever you want."</i></span></div>
+   <p>And the distinction that matters: <i>"If something feels uncomfortable rather than just long, tell me. That's different, and we can pause or stop."</i></p>
+   <p style="color:var(--text3);font-size:13px"><b>Don't:</b> agree to cut takes · frame it as "no pay unless you finish" (coercive).</p>
+
+   <h3>5.6 · A participant asks to hear the recording</h3>
+   <div class="callout"><span class="c-ic">\u201c</span><span class="c-tx"><i>"I totally understand wanting to; most people ask. I'm not able to play anything back; the recordings go straight into a secure workflow and aren't reviewed here."</i><br><br>If they ask whether it's a privacy thing: <i>"Exactly that. How it's stored is spelled out in the form you signed, and DC_Project_US@centific.com can answer anything beyond that."</i></span></div>
+
+   <h3>5.7 · The environment isn't workable</h3>
+   <div class="callout"><span class="c-ic">\u201c</span><span class="c-tx"><i>"I'm picking up some noise on your end. Is there somewhere quieter you could move to? It doesn't need to be perfect, just somewhere the microphone isn't competing."</i><br><br>If a third person is present: <i>"I need to check — is anyone else in the room with you? For privacy reasons we need it to be just the two of you on the recording."</i></span></div>
+   <p style="color:var(--text3);font-size:13px"><b>Don't:</b> push ahead hoping it'll be fine · let a third party remain audible.</p>
+
+   <h3>5.8 · A participant appears intoxicated</h3>
+   <div class="callout warn"><span class="c-ic">\u26A0</span><span class="c-tx"><i>"We're not going to be able to continue today. I'm going to end the session here. Take care, both of you."</i><br><br>Then end the call. Don't explain, don't debate, don't discuss payment, don't offer to reschedule.</span></div>
+   <p>Before ending, send the other participant a private chat: <i>"Nothing to do with you at all — apologies for the short session. Someone will follow up."</i></p>
+   <p>Escalate to <span style="background:var(--amber-bg);color:var(--amber-text);font-weight:700;padding:1px 6px;border-radius:4px;font-size:13px">your Project Manager</span> immediately after. Describe behavior, never conclusions — never use the words "drunk" or "intoxicated" in your escalation.</p>
+
+   <h3>5.9 · Inappropriate conduct toward you</h3>
+   <div class="callout"><span class="c-ic">\u201c</span><span class="c-tx">Redirect once, firmly: <i>"I'm here in a professional capacity, so let's keep our focus on the session. Back to it — [topic]."</i><br><br>If it continues: <i>"I need us to keep this professional. If that's not workable, I'll end the session here."</i><br><br>Then end it if needed, with the same private note as 5.8.</span></div>
+   <p>Escalate to <span style="background:var(--amber-bg);color:var(--amber-text);font-weight:700;padding:1px 6px;border-radius:4px;font-size:13px">your Project Manager</span> same day. Your comfort outranks finishing the session.</p>`},
+
+ {id:'contacts_full',ic:'📞',title:'Who to Contact',sub:'Your contacts, where to route participants, and when to escalate',min:5,type:'content',body:`
+   <h3>Your contacts</h3>
+   <ul><li><b>Maple — process, scheduling, sessions:</b> Milica Novakovic, Senior Project Manager — milica.novakovic@centific.com</li>
+   <li><b>Pine — process, scheduling, sessions:</b> Sas, Senior Project Manager — saswati.sinha@centific.com</li>
+   <li><b>Tooling problems (OneForma, recording room, this app):</b> Bhargav, Project Coordinator — bhargavsai.m@centific.com</li>
+   <li><b>Onboarding / this app / your progress / certification / access problems:</b> Akiko Yeckley, Operations Manager — akiko.yeckley@centific.com</li>
+   <li><b>Participant conduct questions:</b> Drew Sowers, Senior Quality Lead — andrew.sowers@centific.com</li>
+   <li><b>Your hours (reconciling, corrections):</b> Milica / Sas, Senior Project Manager — see rows above</li>
+   <li><b>How your hours reach your agency:</b> Finance Operations — isabel.moriartykarwoski@centific.com</li>
+   <li><b>Your pay, rate, bonuses, future work:</b> Your agency — Centific cannot answer these. See Module 8.</li></ul>
+
+   <h3>Where to route participants</h3>
+   <ul><li><b>Consent form, data use, withdrawal, deleting recordings:</b> DC_Project_US@centific.com</li>
+   <li><b>Payment timing, amount, or problems:</b> <span style="background:var(--amber-bg);color:var(--amber-text);font-weight:700;padding:1px 6px;border-radius:4px;font-size:13px">{{PROJECT_EMAIL}}</span></li>
+   <li><b>Scheduling or rebooking:</b> <span style="background:var(--amber-bg);color:var(--amber-text);font-weight:700;padding:1px 6px;border-radius:4px;font-size:13px">{{PROJECT_EMAIL}}</span></li></ul>
+   <p>You route these. You don't answer them. That isn't a brush-off — it's how participants get accurate answers instead of your best guess.</p>
+
+   <h3>During a live session</h3>
+   <p>Use <span style="background:var(--amber-bg);color:var(--amber-text);font-weight:700;padding:1px 6px;border-radius:4px;font-size:13px">{{CHANNEL}}</span> on MS Teams. The team watches Teams during sessions. Email won't be seen in time.</p>
+
+   <h3>Escalation tiers</h3>
+   <ul><li><b>Handle yourself:</b> routine session flow, everything the scripts cover, normal rescheduling.</li>
+   <li><b>Flag in real time (Teams):</b> anything you can't resolve safely — a participant who appears intoxicated, an unworkable environment, a safety concern, inappropriate conduct toward you, a participant in visible distress.</li>
+   <li><b>Report afterward:</b> resolved but leadership must know — a cancelled or cut-short session, a withdrawal request, a scope dispute, any participant complaint. Same day.</li>
+   <li><b>Escalate immediately:</b> legal, privacy, or safety-of-others weight — a lost recording, a demand touching the consent form, an allegation of misconduct, harm or threat of harm. Notify your Project Manager and don't try to resolve it yourself.</li></ul>`},
+
+ {id:'session_log',ic:'📝',title:'Your Session Log',sub:'What to record after every session — including cancelled ones',min:4,type:'content',body:`
+   <p>Complete a session log after every session — including ones that were cancelled, cut short, or never started. Session logs are delivered to the client. <b>Write knowing an external reader will see it.</b></p>
+
+   <h3>What goes in</h3>
+   <ul><li><b>Session basics:</b> date, time, moderator, and participant identifiers (aliases — never personal details).</li>
+   <li><b>Outcome:</b> completed, rescheduled, cut short, or cancelled, and in one sentence why.</li>
+   <li><b>Scope covered:</b> which recordings were captured, anything skipped or incomplete, and the reason.</li>
+   <li><b>Issues and how you handled them:</b> waits, equipment problems, boundary events, accessibility needs — in neutral, observable terms.</li>
+   <li><b>Escalations:</b> who you contacted, what you passed to them, anything still open.</li></ul>
+
+   <h3>What never goes in</h3>
+   <ul><li>Diagnoses ("drunk," "high") — describe behavior, not conclusions.</li>
+   <li>Payment amounts.</li>
+   <li>Real names.</li>
+   <li>The client's identity.</li>
+   <li>Speculation about why someone behaved as they did.</li></ul>
+
+   <div class="callout"><span class="c-ic">\u25C6</span><span class="c-tx"><b>Example of the right approach:</b> "Participant's audio included a third voice for approximately two minutes" — not "participant's roommate kept interrupting and they didn't seem to care."</span></div>
+   <p>The chat log isn't a substitute. Your texts show what you did, not what prompted it. Your redirect will sit there with no visible cause unless you write the log.</p>
+   <p>Participants never see any of this. If someone asks what was written about them, route to DC_Project_US@centific.com.</p>`},
+
+ {id:'centific_works',ic:'🤝',title:'How Centific Works With You',sub:'Your agency employs you. Centific directs the work. Here’s why that matters.',min:5,type:'content',body:`
+   <p><b>You work with Centific. Your agency employs you.</b> Those are two different relationships, and keeping them clear protects you as much as it protects us.</p>
+   <p>Centific directs the moderation work: what the sessions need, how the data is captured, and what good quality looks like. Your agency is your employer — they hold your contract, they pay you, and they handle everything about your terms of work. <b>You are not a Centific employee.</b> That is not a comment on your value. It is the shape of the arrangement.</p>
+
+   <h3>What Centific provides</h3>
+   <ul><li>The client’s guidelines and the quality standards your work is measured against</li>
+   <li>Access to the data collection tools, recording room, and this app</li>
+   <li>Your Centific email and access to project systems</li>
+   <li>Training and onboarding, including this course</li>
+   <li>Direct communication with your Project Manager and project leads</li>
+   <li>Session scheduling through OneForma</li>
+   <li>Support during live sessions — there is always someone to reach when something goes wrong</li></ul>
+   <p><i>If it’s about doing the work, Centific is the right place to ask.</i></p>
+
+   <h3>What your agency handles</h3>
+   <ul><li>Your pay and your rate</li>
+   <li>Your contract and the hours you’re engaged for</li>
+   <li>Time off, benefits, and taxes</li>
+   <li>Whether there is more work after this project ends</li></ul>
+   <p><i>If it’s about your employment, your agency is the right place to ask — and the only place that can give you a real answer.</i></p>
+
+   <h3>What Centific cannot do for you</h3>
+   <ul><li>Change your rate, your hours, or your terms</li>
+   <li>Approve a bonus or negotiate more hours</li>
+   <li>Promise a permanent role or guarantee future projects</li>
+   <li>Include you in benefits or events for Centific employees</li></ul>
+   <p>If you raise these, your Project Manager will point you back to your agency. That is not a brush-off — they have no authority over your terms.</p>
+
+   <h3>How to describe this work</h3>
+   <p>You are a moderator <b>working with Centific</b>, not <b>working for Centific</b>.</p>
+   <ul><li><b>To participants:</b> introduce yourself as moderating on behalf of Centific (Module 1). Your Centific email starts with <b>v-</b> — it marks you as working through a vendor rather than as staff.</li>
+   <li><b>On LinkedIn or your CV:</b> list your agency as your employer. Example: <i>[Agency name] · Data Collection Moderator — Conducted data collection moderation sessions on behalf of Centific.</i> Do not list Centific as your employer.</li></ul>
+   <div class="callout"><span class="c-ic">◆</span><span class="c-tx">The professional standard is exactly the same regardless of how you are contracted. How you communicate, how you treat participants, and how you represent this work do not change. You are held to the same bar as anyone at Centific.</span></div>`},
+ {id:'hours_pay',ic:'💰',title:'Working at Centific — Hours & Pay',sub:'Logging your time and how payment works',min:5,type:'content',body:`
+   <h3>When your paid time started</h3>
+   <p>The qualification assessment you completed in OneForma was <b>not paid</b>. This onboarding training <b>is</b>. From the moment you reached this app, your time counts — log your onboarding hours in Samay against <span style="background:var(--amber-bg);color:var(--amber-text);font-weight:700;padding:1px 6px;border-radius:4px;font-size:13px">{{PID}}</span>.</p>
+   <p>Your PID for live session work comes from your Project Manager. They will tell you which PID to use.</p>
+   <div class="callout warn"><span class="c-ic">\u26A0</span><span class="c-tx">Your Samay hours become your paycheck. Late or missing entries delay your own payment. Log daily.</span></div>
+
+   <h3>Your timesheet</h3>
+   <p><span style="color:var(--text3)"><i>[Placeholder: step-by-step Samay instructions and screenshots coming soon.]</i></span></p>
+
+   <h3>How you're paid</h3>
+   <p>Your <b>agency pays you</b>, not Centific directly. As a C2C ("Contract 2 Centific") moderator, your contract is with your agency. Centific approves and reports your hours; your agency issues payment.</p>
+   <ul><li><b>End of each two-week period:</b> your Project Manager approves your hours and shares them with Centific's Hiring Manager, who passes them to your agency.</li>
+   <li><b>Timing:</b> depends on your agency — biweekly or monthly. If biweekly: work 1st–15th → paid around 30th/31st; work 16th–end → paid around 15th of following month.</li></ul>
+   <p>Questions about your <b>pay</b> go to the Localization Project Manager. Questions about your <b>hours</b> go to your Project Manager (they approve them).</p>`},
 
 ];
 
@@ -579,12 +888,15 @@ function loadData(){if(_loadPromise)return _loadPromise;_loadPromise=(async()=>{
 })();return _loadPromise;}
 function progressFor(email){email=String(email||'').toLowerCase();
   if(LIVE&&PROGRESS){const rows=PROGRESS.filter(r=>String(r.Email||'').toLowerCase()===email);
-    const doneIds=new Set(rows.filter(r=>String(r.Status||'')==='done').map(r=>r.ModuleID));
-    const q=rows.find(r=>r.ModuleID==='quiz');const score=(q&&q.Score!==''&&q.Score!=null)?Number(q.Score):null;
+    const VALID_IDS=new Set(MODULES.map(m=>m.id));
+    const doneIds=new Set(rows.filter(r=>String(r.Status||'')==='done'&&VALID_IDS.has(r.ModuleID)).map(r=>r.ModuleID));
+    // quiz score: look for any _quiz row with a score (no standalone quiz module anymore)
+    const qRows=rows.filter(r=>String(r.ModuleID||'').endsWith('_quiz')&&r.Score!==''&&r.Score!=null);
+    const score=qRows.length?Math.round(qRows.reduce((a,r)=>a+Number(r.Score),0)/qRows.length):null;
     const lastAt=rows.reduce((m,r)=>((r.UpdatedAt||'')>m?r.UpdatedAt:m),'');return {doneIds,score,lastAt};}
   const rec=DEMO_DIRECTORY.find(r=>r.email===email);if(!rec)return{doneIds:new Set(),score:null,lastAt:''};
   return {doneIds:new Set(MODULES.slice(0,rec.done||0).map(m=>m.id)),score:(rec.score!=null?rec.score:null),lastAt:rec.active||''};}
-function deriveStatus(p){if(p.doneIds.size===0)return'not_started';if(p.score!=null)return p.score>=PASS80?'certified':'quiz_failed';return'in_progress';}
+function deriveStatus(p){const total=MODULES.filter(m=>m.type!=='quiz').length;if(p.doneIds.size===0)return'not_started';if(p.doneIds.size>=total)return'certified';return'in_progress';}
 function formatActive(v){if(!v)return'\u2014';if(/^\d{4}-\d\d-\d\d/.test(v)){const h=(Date.now()-new Date(v).getTime())/3.6e6;if(h<1)return'just now';if(h<24)return Math.floor(h)+'h ago';return Math.floor(h/24)+'d ago';}return v;}
 function buildCohort(){return DIR.filter(r=>r.role==='moderator').map(r=>{const p=progressFor(r.email);
   return {email:r.email,name:r.name,role:r.role,loc:r.loc,tz:r.tz,done:p.doneIds.size,score:p.score,status:deriveStatus(p),active:formatActive(p.lastAt)};});}
@@ -602,7 +914,7 @@ const ROLE_LABEL={moderator:'Mod',admin:'Admin'};
 // directory. This DIRECTORY array stands in for the Excel Moderators table read via a
 // Power Automate flow; the record's `role` column decides mod vs admin. No SSO required.
 function findUser(email){return DIR.find(r=>r.email===email);}
-function applyProfile(rec){if(rec.role!=='moderator')return;const p=progressFor(rec.email);ME.email=rec.email;ME.name=rec.name;ME.loc=rec.loc;ME.tz=rec.tz;ME.done=new Set(p.doneIds);ME.quizBest=p.score;ME.certified=(p.score!=null&&p.score>=PASS80);}
+function applyProfile(rec){if(rec.role!=='moderator')return;const p=progressFor(rec.email);ME.email=rec.email;ME.name=rec.name;ME.loc=rec.loc;ME.tz=rec.tz;ME.done=new Set(p.doneIds);ME.quizBest=p.score;ME.certified=(p.doneIds.size>=MODULES.filter(m=>m.type!=='quiz').length&&p.doneIds.size>0);}
 async function doLogin(){const el=document.getElementById('emailField');const email=(el.value||'').trim().toLowerCase();const err=document.getElementById('lgErr');
  if(!/^[^@\s]+@centific\.com$/.test(email)){err.textContent='Please enter your @centific.com email address.';return;}
  if(!DATA_READY){err.textContent='Signing in\u2026';await loadData();}
