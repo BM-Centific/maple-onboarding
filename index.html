@@ -9,15 +9,15 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
 :root{--accent:#D9772E;--accent-dim:#B75F1E;--accent-soft:rgba(217,119,46,0.15);--accent-ink:#D9772E;--amber:#F59E0B;--amber-bg:#FFF8EC;--amber-text:#92400E;--amber-border:#f5d08a;--green:#22c55e;--green-bg:#EAF3DE;--green-text:#27500A;--red:#ef4444;--red-bg:#FEF2F2;--red-text:#991b1b;--blue:#3b82f6;--blue-bg:#EFF6FF;--blue-text:#1e3a8a;--font:-apple-system,'SF Pro Display','SF Pro Text',BlinkMacSystemFont,'Helvetica Neue',sans-serif;--font-num:'Avenir Next','Avenir','SF Pro Display',-apple-system,sans-serif;}
-[data-theme="dark"]{--bg:#0f0f11;--bg2:#1a1a1e;--bg3:#232329;--bg4:#2d2d34;--text:#F5F4F8;--text2:#a8a8b2;--text3:#77777f;--border:rgba(255,255,255,0.08);--border-strong:rgba(255,255,255,0.14);--input-bg:#232329;--card-bg:#1a1a1e;--nav-bg:rgba(15,15,17,0.88);--sidebar-bg:#1a1a1e;--shadow-sm:0 2px 12px rgba(0,0,0,0.4);--shadow-md:0 8px 40px rgba(0,0,0,0.5);--shadow-lg:0 20px 60px rgba(0,0,0,0.6);--accent-ink:#E8A463;}
-[data-theme="light"]{--bg:#f5f5f7;--bg2:#ffffff;--bg3:#fbfbfd;--bg4:#e8e8ed;--text:#1d1d1f;--text2:#4a4a4f;--text3:#8a8a8e;--border:rgba(170,95,40,0.13);--border-strong:rgba(160,85,30,0.24);--input-bg:#f5f5f7;--card-bg:#ffffff;--nav-bg:rgba(245,245,247,0.88);--sidebar-bg:#ffffff;--shadow-sm:0 2px 12px rgba(0,0,0,0.06);--shadow-md:0 8px 40px rgba(0,0,0,0.10);--shadow-lg:0 20px 60px rgba(0,0,0,0.12);--accent-ink:#B75F1E;}
-body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;letter-spacing:-0.01em;transition:background .3s,color .3s;overflow-x:hidden;}
+[data-theme="dark"]{--bg:#14110F;--bg2:#1D1916;--bg3:#26211D;--bg4:#342C25;--text:#F3EDE6;--text2:#B7ABA0;--text3:#7D726A;--border:#342C25;--border-strong:#4A3F35;--input-bg:#26211D;--card-bg:#1D1916;--nav-bg:rgba(20,17,15,0.88);--sidebar-bg:#1D1916;--shadow-sm:0 2px 12px rgba(0,0,0,0.4);--shadow-md:0 8px 40px rgba(0,0,0,0.5);--shadow-lg:0 20px 60px rgba(0,0,0,0.6);--accent-ink:#E8A463;--bg-glow:#241B12;}
+[data-theme="light"]{--bg:#FBF6EE;--bg2:#FFFDFA;--bg3:#F5EDE0;--bg4:#EDE0CC;--text:#2B211A;--text2:#6B5D4F;--text3:#9C8C7A;--border:rgba(120,80,40,0.14);--border-strong:rgba(110,70,30,0.24);--input-bg:#F5EDE0;--card-bg:#FFFDFA;--nav-bg:rgba(251,246,238,0.88);--sidebar-bg:#FFFDFA;--shadow-sm:0 2px 12px rgba(60,40,10,0.06);--shadow-md:0 8px 40px rgba(60,40,10,0.10);--shadow-lg:0 20px 60px rgba(60,40,10,0.12);--accent-ink:#B75F1E;--bg-glow:#FFF3DF;}
+body{font-family:var(--font);background:radial-gradient(circle at 20% 0%, var(--bg-glow) 0%, var(--bg) 55%);background-attachment:fixed;color:var(--text);min-height:100vh;letter-spacing:-0.01em;transition:background .3s,color .3s;overflow-x:hidden;}
 button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
 input,select,textarea{font-family:inherit;}input:focus{outline:none;}
 ::-webkit-scrollbar{width:10px;height:10px;}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:6px;}
 
 /* login */
-#login{position:fixed;inset:0;z-index:1000;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px;}
+#login{position:fixed;inset:0;z-index:1000;background:radial-gradient(circle at 20% 0%, var(--bg-glow) 0%, var(--bg) 55%);display:flex;align-items:center;justify-content:center;padding:20px;}
 .login-card{width:100%;max-width:430px;background:var(--card-bg);border:.5px solid var(--border);border-radius:20px;box-shadow:var(--shadow-lg);padding:34px 30px;animation:fadeUp .5s ease both;}
 .login-logo{width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,var(--accent),#F0A24D);display:flex;align-items:center;justify-content:center;margin-bottom:18px;font-weight:700;color:#fff;font-size:22px;}
 .login-eyebrow{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);margin-bottom:6px;}
@@ -47,6 +47,8 @@ nav .nav-tabs{flex-shrink:1;min-width:0;max-width:600px;width:100%;}
 .nav-right{display:flex;align-items:center;gap:8px;}
 .menu-toggle{width:32px;height:32px;display:none;align-items:center;justify-content:center;border-radius:8px;}
 .icon-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:8px;color:var(--text2);transition:background .2s;}
+.btn-signout{display:flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:8px;border:.5px solid var(--border-strong);color:var(--text2);font-size:12.5px;font-weight:600;transition:all .18s;}
+.btn-signout:hover{border-color:var(--accent);color:var(--accent-ink);background:var(--accent-soft);}
 .icon-btn:hover{background:var(--bg3);}
 .user-chip{display:flex;align-items:center;gap:8px;padding:5px 10px 5px 6px;background:var(--bg3);border:.5px solid var(--border);border-radius:20px;font-size:13px;font-weight:500;}
 .user-av{width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;}
@@ -239,7 +241,7 @@ nav .nav-tabs{flex-shrink:1;min-width:0;max-width:600px;width:100%;}
 <nav style="display:none" id="nav">
   <div class="nav-left"><div class="nav-logo">M</div><div class="nav-brand">Project Maple <span>· Onboarding</span></div></div>
   <div class="nav-tabs" id="navTabs"></div>
-  <div class="nav-right"><button class="icon-btn" onclick="toggleTheme()" title="Theme">◐</button><div class="user-chip"><span class="user-av" id="userAv">A</span><span id="userName">Moderator</span><span class="role-pill" id="userRole">Mod</span></div><button class="icon-btn" onclick="logout()" title="Sign out">⎋</button></div>
+  <div class="nav-right"><button class="icon-btn" onclick="toggleTheme()" title="Theme">◐</button><div class="user-chip"><span class="user-av" id="userAv">A</span><span id="userName">Moderator</span><span class="role-pill" id="userRole">Mod</span></div><button class="btn-signout" onclick="logout()"><span aria-hidden="true">⎋</span>Sign out</button></div>
 </nav>
 
 <div class="shell" style="display:none" id="shell"><main class="content" id="content"></main></div>
