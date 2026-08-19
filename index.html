@@ -226,7 +226,7 @@ nav{position:sticky;top:0;z-index:200;height:52px;background:var(--nav-bg);backd
     <button class="lg-go" onclick="doLogin()">Continue →</button>
     <div class="lg-hint">Moderators land in their learning path; program admins land in the cohort dashboard — no need to choose.</div>
     <div class="lg-demo">Demo shortcuts: <button onclick="demoLogin('moderator')">enter as moderator</button> · <button onclick="demoLogin('admin')">enter as admin</button></div>
-    <div style="text-align:center;margin-top:8px;font-size:10px;color:var(--text3);letter-spacing:.04em">v0.8 · demo build</div>
+    <div style="text-align:center;margin-top:8px;font-size:10px;color:var(--text3);letter-spacing:.04em">v1.2.081926 · demo build</div>
 
   </div>
 </div>
@@ -303,7 +303,7 @@ const MOD_QUESTIONS={
  ],
  walkthrough:[
   {q:'What is the walkthrough video designed to show?',opts:['How to set up your Centific account','The full click-by-click session flow in the real OneForma tool','A comparison of Maple and Juniper platforms','How to fill out your timesheet in Samay'],a:1},
-  {q:'What should you have open for reference while watching the walkthrough video and conducting sessions?',opts:['The participant confirmation email template','The Moderator SOP','A blank timesheet','The Topic & Prompt Bank only'],a:1}
+  {q:'What should you have open for reference while watching the walkthrough video and conducting sessions?',opts:['The participant confirmation email template','The Session SOP','A blank timesheet','The Topic & Prompt Bank only'],a:1}
  ],
  privacy:[
   {q:'A participant says their real first name during a recording. What should you do?',opts:['Nothing — first names are not PII','Note it in the QA comments and pass the file','Stop and re-record — real identifiers fail QA','Only flag it if they also give their last name'],a:2},
@@ -337,10 +337,6 @@ const MOD_QUESTIONS={
  contacts_full:[
   {q:'During a live session something goes seriously wrong. What\'s your first move?',opts:['Email your project manager','Call the participant\'s emergency contact','Use the MS Teams moderator channel — the team monitors it during sessions','Wait until after the session to report'],a:2},
   {q:'A participant asks about withdrawing consent and deleting their recording. You:',opts:['Walk them through the withdrawal process yourself','Route them to DC_Project_US@centific.com','Tell them it\'s not possible','Contact your project owner to decide'],a:1}
- ],
- session_log:[
-  {q:'A session is cut short due to a participant issue. Do you still file a session log?',opts:['No — only completed sessions need a log','Yes — every session including cancelled or cut-short ones','Only if you had to escalate','Only if the client requests it'],a:1},
-  {q:'How should you describe a participant who appeared intoxicated in a session log?',opts:['\"Participant appeared drunk\"','Neutral observable behavior only — e.g. speech was notably slurred and responses were non-sequiturs','\"Participant was intoxicated\"','No need to document — just escalate verbally'],a:1}
  ],
  centific_works:[
   {q:'You work with Centific. Who is your employer?',opts:['Centific — you work on their platform','Your agency — Centific directs the work, your agency holds your contract and pays you','OneForma — they process your sessions','Both Centific and your agency equally'],a:1},
@@ -390,8 +386,8 @@ function pickAnswer(id,qIdx,chosen){
 
   // unlock Continue button without re-rendering page
   if(allDone){
-    const btns=document.querySelectorAll('.reader-foot button[disabled]');
-    btns.forEach(b=>{if(b.title==='Answer all module questions to continue'){b.disabled=false;b.title='';b.textContent='Mark complete & continue \u2192';}});
+    const btns=[document.getElementById('mod-continue-btn')].filter(Boolean);
+    btns.forEach(b=>{if(b.disabled){b.disabled=false;b.title='';b.textContent='Mark complete & continue \u2192';b.onclick=function(){completeModule();};}});
   }
 
   // auto-advance to next question (re-renders just the quiz card area via qzNav)
@@ -448,7 +444,7 @@ const MODULES=[
    <ul><li>Welcome two participants into an online recording room and get their audio working.</li><li>Guide a relaxed conversation so that natural code-switching happens — without ever telling people to switch.</li><li>Record several takes, then QA each one against a quality checklist.</li><li>Submit your verdicts and close the session out.</li></ul>
    <div class="callout"><span class="c-ic">◆</span><span class="c-tx">Sessions are <b>audio only</b> — there are no cameras. You'll never appear on the recording, and you steer largely through a one-way text chat.</span></div>
    <h3>How this onboarding works</h3>
-   <p>Work through the modules below at your own pace, in your own timezone. At the end there's a short <b>knowledge check</b> — pass it and you're cleared to run real sessions. Keep the full <b>Moderator SOP</b> and <b>Topic & Prompt Bank</b> open as you go; they're your day-to-day references.</p>`},
+   <p>Work through the modules below at your own pace, in your own timezone. At the end there's a short <b>knowledge check</b> — pass it and you're cleared to run real sessions. Keep the full <b>Session SOP</b> and <b>Topic & Prompt Bank</b> open as you go; they're your day-to-day references.</p>`},
  {id:'codeswitch',ic:'🗣️',title:'Code-Switching, Up Close',sub:'The nuances that decide whether a recording counts',min:6,type:'content',body:`
    <h3>The two switching patterns</h3>
    {{CODESWITCH_EXAMPLES}}
@@ -467,7 +463,7 @@ const MODULES=[
    <h3>The full reject bar (any one \u2192 reject)</h3>
    <ul><li><b>Code-switching:</b> too little switching or below the ratio; only isolated loanwords / brand names; only between-sentence switching; forced or scripted; halting or affected-accent English; a third language used more than incidentally.</li><li><b>Naturalness:</b> reading, reciting, or rehearsed delivery; AI / synthetic / text-to-speech audio; an imitated accent.</li><li><b>Conversation:</b> a monologue or one speaker dominating; very uneven participation; an incomplete or abruptly-ended talk; a silence longer than <b>6 seconds</b>; anything that isn\u2019t a genuine back-and-forth.</li><li><b>Duration:</b> under <b>3 minutes</b> or over <b>30 minutes</b>.</li><li><b>Content &amp; compliance:</b> real personal identifiers (names, addresses, financial details); political, religious, violent, or offensive material; duplicate or reused content.</li><li><b>Speakers:</b> primary language not at native level; English below the declared level; more than two speakers.</li></ul>
    <h3>Your in-session QA \u2014 the 13 checks</h3>
-   <p>After each take you answer <b>13 Yes/No questions</b> in Recording Review \u2014 covering audio, natural and within-sentence switching, balance, duration, silences, third languages, and PII. They map directly to the reject bar above. <b>All Yes</b> unlocks Pass / Weak Pass; a <b>single No</b> means Fail. (The exact wording lives in the Moderator SOP.)</p>
+   <p>After each take you answer <b>13 Yes/No questions</b> in Recording Review \u2014 covering audio, natural and within-sentence switching, balance, duration, silences, third languages, and PII. They map directly to the reject bar above. <b>All Yes</b> unlocks Pass / Weak Pass; a <b>single No</b> means Fail. (The exact wording lives in the Session SOP.)</p>
    <div class="callout warn"><span class="c-ic">\u26A0</span><span class="c-tx">When you\u2019re unsure, <b>re-record rather than pass</b>. A rejected file costs one take; a bad file that slips through costs the dataset.</span></div>
    <div class="callout"><span class="c-ic">\u2139</span><span class="c-tx">A speaker mismatch is different from a bad take \u2014 if someone\u2019s primary-language level, English level, or demographics don\u2019t match what was declared at recruitment, <b>end the session and let participants know they’ll be rescheduled</b> — don’t try to re-record around it.</span></div>`},
  {id:'tool',ic:'🛠️',title:'The OneForma Recording Tool',sub:'Access the tool, check your profile, and find your session',min:8,type:'content',body:`
@@ -502,7 +498,7 @@ const MODULES=[
    <h3>The flow, in order</h3>
    <ul><li><b>Join ~5 min early</b> and paste a welcome message in the chat so participants can read it as they get set up.</li><li><b>Confirm the roster</b> (two participants + you as MOD) and agree on the <b>aliases</b> everyone wants used.</li><li><b>Sound check</b> — confirm each person is clearly audible and can hear the other.</li><li><b>Brief them</b> on the task: a natural conversation, mixing in English, no script.</li><li><b>Practice takes</b> — at least two, and more if needed (see the gate below).</li><li><b>Record</b> the real takes.</li><li><b>QA</b> each recording against the checklist and submit Pass / Weak Pass / Fail.</li><li><b>End the call, then close the session.</b></li></ul>
    <h3>What you record</h3>
-   <ul><li><b>Real take</b> — one conversation, ~10 min.</li><li><b>Primary recording</b> — ~30 min.</li><li><b>Secondary recordings</b> — two conversations of ~10 min, <b>or</b> one of ~20 min, on new topics.</li></ul>
+   <p>Maple runs a fixed session structure: <b>10 recordings per session</b>, each on a fresh topic, ranging from about <b>5 to 28 minutes</b> long — roughly <b>157 minutes of deliverable audio</b> in total, plus orientation, practice, and feedback time (~3.5 hours all in). Use the timings as a pacing guide, not a rigid script — stay flexible in the room, but keep the total session close to target. See the Session SOP (Section 6) for the exact length and order of each recording.</p>
    <div class="callout"><span class="c-ic">ℹ</span><span class="c-tx">Each participant has a <b>2-hour cumulative cap</b> across the whole program — once they hit it, book a different participant for future sessions.</span></div>
    <div class="callout"><span class="c-ic">🔒</span><span class="c-tx"><b>The practice gate:</b> don't start any real recording until you're confident both participants can code-switch naturally. Two practice takes is the minimum, not a cap.</span></div>
 
@@ -522,7 +518,7 @@ const MODULES=[
    <h3>2. Record the conversation takes</h3>
    <ol><li>Set the scene and topic. Once participants are ready, <b>mute yourself</b>, then click <b>RECORD</b>. Clicking it asks you to confirm before recording actually starts.</li>
    <li>Tell participants via chat to click <b>REC TIME</b> on their end too, so they see the timer.</li>
-   <li>Watch <b>REC TIME</b> in the corner to track the length of the take — aim for <b>10–30 minutes</b> per take.</li>
+   <li>Watch <b>REC TIME</b> in the corner to track the length of the take — each recording has its own target length per the session structure above (5–28 min); hard bounds for any recording are <b>3–30 minutes</b>.</li>
    <li>Click <b>STOP</b> to end the take.</li></ol>
    ${shot('record_confirm','Clicking RECORD asks you to confirm before recording starts.',330)}
    ${shot('rec_counter','REC counts up in the corner while recording is live.',480)}
@@ -556,14 +552,23 @@ const MODULES=[
  {id:'technique',ic:'🎚️',title:'Moderating for Natural Switching',sub:'Steer it — and when to stop vs. nudge',min:5,type:'content',body:`
    <h3>You're a facilitator, not an interviewer</h3>
    <p>Natural switching comes from <b>topic and setting</b>, never from instruction. Pick topics that pull English out (work, tech, study abroad, pop culture) and ask follow-ups that invite opinions and explanations.</p>
+   <h3>The target ratio</h3>
+   <p>Aim for English at roughly <b>10–15% of the conversation</b>, measured after transcription — not something you count live. Gauge it roughly as you listen, and look for English <b>recurring throughout</b> the take rather than clustered at one point.</p>
+   <h3>How to steer — Higher vs. Lower topics</h3>
+   <ul><li><b>Higher-tagged topics</b> (work, technology, study/life abroad, pop culture) pull more English out naturally.</li><li><b>Lower-tagged topics</b> (family, food, reflection) pull less — use these to bring the ratio down if a take is running English-heavy.</li><li><b>Directed follow-ups:</b> steer toward English-heavy subject matter — specific work tools, streaming platforms, professional processes — to draw English out organically.</li><li><b>Between-take adjustment:</b> if a take stayed mostly in the primary language, nudge the next take's topic or follow-ups toward a Higher-tagged one.</li><li><b>Coaching, the right way:</b> between takes or in practice, you may read a natural-switching example from the Topic Bank aloud. Never supply a word list.</li></ul>
    <h3>Never do this</h3>
-   <ul><li>Say "say that in English" or cue a switch.</li><li>Hand participants a list of English words to insert.</li><li>Accept scripted, read-aloud, or affected-accent switching.</li></ul>
+   <ul><li>Say "say that in English" or cue a switch.</li><li>Hand participants a list of English words to insert.</li><li>Accept scripted, read-aloud, or affected-accent switching (in either language).</li></ul>
+   <h3>Speaker balance</h3>
+   <p>If one speaker starts to dominate, correct it <b>between takes</b> — direct the next follow-up to the quieter speaker <b>by name</b> at the start of the next take, rather than interrupting mid-take.</p>
+   <h3>Content protection</h3>
+   <p>If real personal identifiers or sensitive content surface, <b>stop the take and re-record</b>. More than incidental use of a third language (beyond the primary language + English pair) is also a violation — send a chat pointer first; if it continues, stop and re-record.</p>
    <h3>Stop &amp; re-record vs. nudge</h3>
-   <p><b>Stop and re-record</b> for: forced/scripted switching, unclear audio, a take under 3 min, or a real name/PII.</p>
+   <p><b>Stop and re-record</b> for: forced/scripted switching, unclear audio, a take under 3 min, real names/PII, or sustained third-language use.</p>
    <p><b>Nudge with a text-chat reminder</b> (don't redo) for: no English for a while, only isolated words, long silences, or one speaker dominating — steer the next follow-up rather than requesting English directly.</p>`},
  {id:'walkthrough',ic:'🎬',title:'Watch: Full Session Walkthrough',sub:'A complete session, demonstrated end to end',min:55,type:'content',body:`
    <h3>Your session walkthrough</h3>
-   <p>This is a guided demo of a complete session in the OneForma tool — joining and briefing, recording takes, QA, and closing out. It’s meant to be watched <b>hand-in-hand with the Moderator SOP</b>: the modules here teach the concepts, and this shows you the click-by-click flow in the real tool. Keep the SOP open and follow along.</p>
+   <p>This is a guided demo of a complete session in the OneForma tool — joining and briefing, recording takes, QA, and closing out. It's meant to be watched <b>hand-in-hand with the Session SOP</b>: the modules here teach the concepts, and this shows you the click-by-click flow in the real tool. Keep the SOP open and follow along.</p>
+   <div class="callout"><span class="c-ic">ℹ</span><span class="c-tx">The video below refers to this document as the "Moderator SOP" — it's the same document, just renamed to <b>Session SOP</b> since it was recorded. Look for that name under Resources.</span></div>
    <div style="position:relative;padding-top:56.25%;border-radius:12px;overflow:hidden;border:.5px solid var(--border);background:#000;margin:14px 0">
      <iframe src="https://digitaltechedge.sharepoint.com/sites/Verdi_Juniper/_layouts/15/embed.aspx?UniqueId=479783c0-17ce-4573-accf-0d3023c43a28" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen title="Maple session walkthrough"></iframe>
    </div>
@@ -591,7 +596,7 @@ const MODULES=[
    <h3>Introducing yourself</h3>
    <p>Use your <b>real first name</b>, and open with a line like this:</p>
    <div class="callout"><span class="c-ic">&#x201C;</span><span class="c-tx"><i>"Hi, I'm [name]. I'll be moderating this data capture session on behalf of Centific."</i></span></div>
-   <p><b>"On behalf of Centific"</b> is the right phrasing. Your agency is your employer, and describing it any other way is inaccurate — Module 8 covers this fully. Participants are using aliases; you are not. This is deliberate: you are the accountable professional in the room, and participants are protected contributors.</p>
+   <p><b>"On behalf of Centific"</b> is the right phrasing, and it matters — you work <b>with</b> Centific, not <b>for</b> Centific. Your agency is your employer, and describing it any other way is inaccurate — Module 8 covers this fully. Participants are using aliases; you are not. This is deliberate: you are the accountable professional in the room, and participants are protected contributors.</p>
 
    <h3>The client is confidential</h3>
    <p>You do not name the client to participants. You do not describe their industry. You do not speculate about what the data will be used for. If a participant asks who the client is:</p>
@@ -619,7 +624,7 @@ const MODULES=[
    <p>By the end, every participant should know:</p>
    <ul><li>Their recordings were submitted successfully.</li>
    <li>When and how they'll be paid (see below).</li>
-   <li>Who to contact afterward: <span style="background:var(--amber-bg);color:var(--amber-text);font-weight:700;padding:1px 6px;border-radius:4px;font-size:13px">{{PROJECT_EMAIL}}</span></li>
+   <li>Who to contact afterward: <b>prod_code_switching@centific.com</b></li>
    <li>That they won't receive or review copies of the recordings.</li></ul>
    <p><b>Thank them explicitly, by alias, at the close.</b> They've given you two to three hours of unscripted personal conversation. That contribution matters — say so.</p>
 
@@ -630,7 +635,7 @@ const MODULES=[
    <li><b>Method:</b> Tremendous.</li>
    <li><b>Timing:</b> 5 business days after the session completes.</li>
    <li><b>Terms:</b> per the agreement signed at OneForma registration.</li></ul>
-   <p>You are empowered to state these facts. You are not responsible for managing payment. Answer the question, then route anything further to <span style="background:var(--amber-bg);color:var(--amber-text);font-weight:700;padding:1px 6px;border-radius:4px;font-size:13px">{{PROJECT_EMAIL}}</span>. <b>Never quote a figure, never promise an exact deposit date, never offer to chase a payment personally.</b></p>`},
+   <p>You are empowered to state these facts. You are not responsible for managing payment. Answer the question, then route anything further to <b>prod_code_switching@centific.com</b>. <b>Never quote a figure, never promise an exact deposit date, never offer to chase a payment personally.</b></p>`},
 
  {id:'rep_comms',ic:'💬',title:'Communicating During the Session',sub:'Staying muted, using chat, and steering the conversation',min:8,type:'content',body:`
    <p><b>Your voice is not the data. Theirs is.</b></p>
@@ -653,6 +658,10 @@ const MODULES=[
 
  {id:'scripts_journey',ic:'📜',title:'Scripts: The Participant Journey',sub:'Ready-to-use scripts for common situations — welcome to close',min:8,type:'content',body:`
    <p>These scripts cover the most common situations you'll encounter. Use the exact words or adapt them — but make sure every key point is covered.</p>
+   <div style="position:relative;padding-top:56.25%;border-radius:12px;overflow:hidden;border:.5px solid var(--border);background:#000;margin:14px 0">
+     <iframe src="https://digitaltechedge.sharepoint.com/sites/Code-Switching_Collection_Moderators/_layouts/15/embed.aspx?UniqueId=59f61ded-88d8-4ac9-917e-80383b7f262b" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen title="Moderator Fundamentals - Participant Experience Scenarios"></iframe>
+   </div>
+   <div class="callout"><span class="c-ic">▶</span><span class="c-tx">Signed in with your Centific account, the walkthrough plays above. If it doesn't load, <a href="https://digitaltechedge.sharepoint.com/:v:/r/sites/Code-Switching_Collection_Moderators/Shared%20Documents/Project%20Maple/Onboarding%20Resources/Video%20Walkthroughs/Moderator%20Fundamentals%20-%20PT%20Experience%20Scenarios.mp4?d=w59f61ded88d84ac9917e80383b7f262b&amp;csf=1&amp;web=1&amp;e=NJA7WH" target="_blank" rel="noopener" style="color:var(--accent-ink);font-weight:600">open it in SharePoint ↗</a>.</span></div>
 
    <h3>4.1 · Welcoming a nervous participant</h3>
    <p><i>Situation: a participant joins sounding anxious — they've never done this.</i></p>
@@ -663,8 +672,8 @@ const MODULES=[
 
    <h3>4.2 · Orienting an unprepared participant</h3>
    <p><i>Situation: a participant admits they didn't read the welcome materials.</i></p>
-   <div class="callout"><span class="c-ic">\u201c</span><span class="c-tx"><i>"No problem at all. Here's the short version: you two are going to have some normal conversations while I record the audio. That's genuinely it. We'll warm up with a few practice runs I don't keep, then a short one about ten minutes, then a longer one around thirty, then one or two shorter ones on different topics. I'll suggest topics as we go. You don't need anything prepared."</i></span></div>
-   <p>Before you record, confirm they completed registration and consent at OneForma. If anything is outstanding, don't start the session — route them to <span style="background:var(--amber-bg);color:var(--amber-text);font-weight:700;padding:1px 6px;border-radius:4px;font-size:13px">{{PROJECT_EMAIL}}</span>.</p>
+   <div class="callout"><span class="c-ic">\u201c</span><span class="c-tx"><i>"No problem at all. Here's the short version: you two are going to have some normal conversations while I record the audio. That's genuinely it. We'll warm up with a few practice runs I don't keep, then record about ten separate conversations on different topics — some shorter, some longer — adding up to around two and a half hours of conversation total. I'll suggest topics as we go. You don't need anything prepared."</i></span></div>
+   <p>Before you record, confirm they completed registration and consent at OneForma. If anything is outstanding, don't start the session — route them to <b>prod_code_switching@centific.com</b>.</p>
    <p style="color:var(--text3);font-size:13px"><b>Don't:</b> make them feel judged · describe client specifications or ratios · skip the roadmap because you're behind.</p>
 
    <h3>4.3 · Adapting for language level or accessibility needs</h3>
@@ -685,7 +694,7 @@ const MODULES=[
 
    <h3>4.6 · Payment questions after the session</h3>
    <p><i>Situation: the session is done and a participant asks when the money arrives.</i></p>
-   <div class="callout"><span class="c-ic">\u201c</span><span class="c-tx"><i>"Five business days, through Tremendous. If it hasn't landed after that, email <span style="background:var(--amber-bg);color:var(--amber-text);font-weight:700;padding:1px 6px;border-radius:4px;font-size:13px">{{PROJECT_EMAIL}}</span> and they'll chase it. That's not something I can do from my end, but they can."</i></span></div>
+   <div class="callout"><span class="c-ic">\u201c</span><span class="c-tx"><i>"Five business days, through Tremendous. If it hasn't landed after that, email <b>prod_code_switching@centific.com</b> and they'll chase it. That's not something I can do from my end, but they can."</i></span></div>
    <p>Read their payment email back to confirm the spelling — it's cheap and prevents an entire category of problem.</p>`},
 
  {id:'scripts_pressure',ic:'🚧',title:'Scripts: Pressure & Boundaries',sub:'What to say when things get difficult',min:9,type:'content',body:`
@@ -711,7 +720,7 @@ const MODULES=[
 
    <h3>5.4 · A participant wants to stop</h3>
    <div class="callout"><span class="c-ic">\u201c</span><span class="c-tx"><i>"Absolutely. You can stop at any time, and that's completely okay. No explanation needed."</i></span></div>
-   <p>If they ask about payment: <i>"It's based on the recording time we actually completed, so it'd be prorated rather than the full session rate. For exactly what that works out to, <span style="background:var(--amber-bg);color:var(--amber-text);font-weight:700;padding:1px 6px;border-radius:4px;font-size:13px">{{PROJECT_EMAIL}}</span> is the right place. But please don't let that change what you decide. If you want to stop, we stop."</i></p>
+   <p>If they ask about payment: <i>"It's based on the recording time we actually completed, so it'd be prorated rather than the full session rate. For exactly what that works out to, <b>prod_code_switching@centific.com</b> is the right place. But please don't let that change what you decide. If you want to stop, we stop."</i></p>
    <p><b>Never use payment as an argument for staying.</b> If they don't ask about pay, don't raise it.</p>
 
    <h3>5.5 · A participant negotiates scope</h3>
@@ -738,49 +747,27 @@ const MODULES=[
  {id:'contacts_full',ic:'📞',title:'Who to Contact',sub:'Your contacts, where to route participants, and when to escalate',min:5,type:'content',body:`
    <h3>Your contacts</h3>
    <ul><li><b>Maple — process, scheduling, sessions:</b> Milica Novakovic, Senior Project Manager — milica.novakovic@centific.com</li>
-   <li><b>Pine — process, scheduling, sessions:</b> Sas, Senior Project Manager — saswati.sinha@centific.com</li>
    <li><b>Tooling problems (OneForma, recording room, this app):</b> Bhargav, Project Coordinator — bhargavsai.m@centific.com</li>
-   <li><b>Onboarding / this app / your progress / certification / access problems:</b> Akiko Yeckley, Operations Manager — akiko.yeckley@centific.com</li>
+   <li><b>Onboarding / your progress / certification / access problems:</b> Akiko Yeckley, Operations Manager — akiko.yeckley@centific.com (backup: Amy Johns — amy.johns@centific.com)</li>
    <li><b>Participant conduct questions:</b> Drew Sowers, Senior Quality Lead — andrew.sowers@centific.com</li>
-   <li><b>Your hours (reconciling, corrections):</b> Milica / Sas, Senior Project Manager — see rows above</li>
-   <li><b>How your hours reach your agency:</b> Finance Operations — isabel.moriartykarwoski@centific.com</li>
+   <li><b>Your hours (reconciling, corrections):</b> Milica Novakovic, Senior Project Manager — see row above</li>
+   <li><b>How your hours reach your agency:</b> Akiko Yeckley, Operations Manager — akiko.yeckley@centific.com</li>
    <li><b>Your pay, rate, bonuses, future work:</b> Your agency — Centific cannot answer these. See Module 8.</li></ul>
 
    <h3>Where to route participants</h3>
    <ul><li><b>Consent form, data use, withdrawal, deleting recordings:</b> DC_Project_US@centific.com</li>
-   <li><b>Payment timing, amount, or problems:</b> <span style="background:var(--amber-bg);color:var(--amber-text);font-weight:700;padding:1px 6px;border-radius:4px;font-size:13px">{{PROJECT_EMAIL}}</span></li>
-   <li><b>Scheduling or rebooking:</b> <span style="background:var(--amber-bg);color:var(--amber-text);font-weight:700;padding:1px 6px;border-radius:4px;font-size:13px">{{PROJECT_EMAIL}}</span></li></ul>
+   <li><b>Payment timing, amount, or problems:</b> <b>prod_code_switching@centific.com</b></li>
+   <li><b>Scheduling or rebooking:</b> <b>prod_code_switching@centific.com</b></li></ul>
    <p>You route these. You don't answer them. That isn't a brush-off — it's how participants get accurate answers instead of your best guess.</p>
 
    <h3>During a live session</h3>
-   <p>Use <span style="background:var(--amber-bg);color:var(--amber-text);font-weight:700;padding:1px 6px;border-radius:4px;font-size:13px">{{CHANNEL}}</span> on MS Teams. The team watches Teams during sessions. Email won't be seen in time.</p>
+   <p>Use <b>the "Maple Moderators" channel</b> on MS Teams. The team watches Teams during sessions. Email won't be seen in time.</p>
 
    <h3>Escalation tiers</h3>
    <ul><li><b>Handle yourself:</b> routine session flow, everything the scripts cover, normal rescheduling.</li>
    <li><b>Flag in real time (Teams):</b> anything you can't resolve safely — a participant who appears intoxicated, an unworkable environment, a safety concern, inappropriate conduct toward you, a participant in visible distress.</li>
    <li><b>Report afterward:</b> resolved but leadership must know — a cancelled or cut-short session, a withdrawal request, a scope dispute, any participant complaint. Same day.</li>
    <li><b>Escalate immediately:</b> legal, privacy, or safety-of-others weight — a lost recording, a demand touching the consent form, an allegation of misconduct, harm or threat of harm. Notify your Project Manager and don't try to resolve it yourself.</li></ul>`},
-
- {id:'session_log',ic:'📝',title:'Your Session Log',sub:'What to record after every session — including cancelled ones',min:4,type:'content',body:`
-   <p>Complete a session log after every session — including ones that were cancelled, cut short, or never started. Session logs are delivered to the client. <b>Write knowing an external reader will see it.</b></p>
-
-   <h3>What goes in</h3>
-   <ul><li><b>Session basics:</b> date, time, moderator, and participant identifiers (aliases — never personal details).</li>
-   <li><b>Outcome:</b> completed, rescheduled, cut short, or cancelled, and in one sentence why.</li>
-   <li><b>Scope covered:</b> which recordings were captured, anything skipped or incomplete, and the reason.</li>
-   <li><b>Issues and how you handled them:</b> waits, equipment problems, boundary events, accessibility needs — in neutral, observable terms.</li>
-   <li><b>Escalations:</b> who you contacted, what you passed to them, anything still open.</li></ul>
-
-   <h3>What never goes in</h3>
-   <ul><li>Diagnoses ("drunk," "high") — describe behavior, not conclusions.</li>
-   <li>Payment amounts.</li>
-   <li>Real names.</li>
-   <li>The client's identity.</li>
-   <li>Speculation about why someone behaved as they did.</li></ul>
-
-   <div class="callout"><span class="c-ic">\u25C6</span><span class="c-tx"><b>Example of the right approach:</b> "Participant's audio included a third voice for approximately two minutes" — not "participant's roommate kept interrupting and they didn't seem to care."</span></div>
-   <p>The chat log isn't a substitute. Your texts show what you did, not what prompted it. Your redirect will sit there with no visible cause unless you write the log.</p>
-   <p>Participants never see any of this. If someone asks what was written about them, route to DC_Project_US@centific.com.</p>`},
 
  {id:'centific_works',ic:'🤝',title:'How Centific Works With You',sub:'Your agency employs you. Centific directs the work. Here’s why that matters.',min:5,type:'content',body:`
    <p><b>You work with Centific. Your agency employs you.</b> Those are two different relationships, and keeping them clear protects you as much as it protects us.</p>
@@ -817,18 +804,47 @@ const MODULES=[
    <div class="callout"><span class="c-ic">◆</span><span class="c-tx">The professional standard is exactly the same regardless of how you are contracted. How you communicate, how you treat participants, and how you represent this work do not change. You are held to the same bar as anyone at Centific.</span></div>`},
  {id:'hours_pay',ic:'💰',title:'Working at Centific — Hours & Pay',sub:'Logging your time and how payment works',min:5,type:'content',body:`
    <h3>When your paid time started</h3>
-   <p>The qualification assessment you completed in OneForma was <b>not paid</b>. This onboarding training <b>is</b>. From the moment you reached this app, your time counts — log your onboarding hours in Samay against <span style="background:var(--amber-bg);color:var(--amber-text);font-weight:700;padding:1px 6px;border-radius:4px;font-size:13px">{{PID}}</span>.</p>
-   <p>Your PID for live session work comes from your Project Manager. They will tell you which PID to use.</p>
+   <p>The qualification assessment you completed in OneForma was <b>not paid</b>. This onboarding training <b>is</b>. From the moment you reached this app, your time counts — log your onboarding hours in Samay against your project's PID (see <b>Your timesheet</b> below).</p>
+   <p>Your PID for live session work is the same one — your Project Manager will confirm it if anything changes.</p>
    <div class="callout warn"><span class="c-ic">\u26A0</span><span class="c-tx">Your Samay hours become your paycheck. Late or missing entries delay your own payment. Log daily.</span></div>
 
    <h3>Your timesheet</h3>
-   <p><span style="color:var(--text3)"><i>[Placeholder: step-by-step Samay instructions and screenshots coming soon.]</i></span></p>
+   <p><b>How to log in:</b></p>
+   <ol><li>Go to <a href="https://timesheet.centific.com/#/login" target="_blank" rel="noopener" style="color:var(--accent-ink);font-weight:600">timesheet.centific.com/#/login ↗</a>.</li>
+   <li>Click <b>Login by SSO</b>.</li>
+   <li>Use your Centific <b>v-</b> email and password — the same Moderator email Centific IT sent you in your welcome letter.</li></ol>
+   <p>Reference the walkthrough below for the click-by-click flow, including how to log both your onboarding and working hours.</p>
+   <div style="position:relative;padding-top:56.25%;border-radius:12px;overflow:hidden;border:.5px solid var(--border);background:#000;margin:14px 0">
+     <iframe src="https://digitaltechedge.sharepoint.com/sites/Code-Switching_Collection_Moderators/_layouts/15/embed.aspx?UniqueId=d7136f8e-1458-433a-9b95-e176cdcd94ad" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen title="Moderator Fundamentals - Samay Timesheet"></iframe>
+   </div>
+   <div class="callout"><span class="c-ic">▶</span><span class="c-tx">Signed in with your Centific account, the walkthrough plays above. If it doesn't load, <a href="https://digitaltechedge.sharepoint.com/:v:/r/sites/Code-Switching_Collection_Moderators/Shared%20Documents/Project%20Maple/Onboarding%20Resources/Video%20Walkthroughs/Moderator%20Fundamentals%20-%20Samay%20Timesheet.mp4?d=wd7136f8e1458433a9b95e176cdcd94ad&amp;csf=1&amp;web=1&amp;e=WN1jbg" target="_blank" rel="noopener" style="color:var(--accent-ink);font-weight:600">open it in SharePoint ↗</a>.</span></div>
+   <div class="callout"><span class="c-ic">ℹ</span><span class="c-tx">Your Project Maple PID is <span style="background:var(--amber-bg);color:var(--amber-text);font-weight:700;padding:1px 6px;border-radius:4px;font-size:13px">UWHSZZZZZ26I029</span> (Code Switching OTS Maple). Use it for both onboarding and live-session hours unless your Project Manager tells you otherwise.</span></div>
 
    <h3>How you're paid</h3>
    <p>Your <b>agency pays you</b>, not Centific directly. As a C2C ("Contract 2 Centific") moderator, your contract is with your agency. Centific approves and reports your hours; your agency issues payment.</p>
    <ul><li><b>End of each two-week period:</b> your Project Manager approves your hours and shares them with Centific's Hiring Manager, who passes them to your agency.</li>
    <li><b>Timing:</b> depends on your agency — biweekly or monthly. If biweekly: work 1st–15th → paid around 30th/31st; work 16th–end → paid around 15th of following month.</li></ul>
    <p>Questions about your <b>pay</b> go to the Localization Project Manager. Questions about your <b>hours</b> go to your Project Manager (they approve them).</p>`},
+
+ {id:'next_steps',ic:'🎉',title:'Next Steps',sub:'You\'ve finished training — here\'s what happens now',min:3,type:'content',body:`
+   <p><b>Congratulations — you've completed Maple moderator training.</b> Here's exactly what happens between now and your first real session.</p>
+
+   <h3>1. Your training pay</h3>
+   <p>To cover the time you've just spent on this onboarding, <b>3 hours will be added to your Samay timesheet</b> for you. You don't need to log this time yourself — it's on top of anything you already logged as you worked through the modules.</p>
+
+   <h3>2. Set your Working Hours in OneForma</h3>
+   <p>Real sessions can only be booked once your availability is on file. Go to <b>Operation → Moderators</b>, select yourself, and set your <b>Working Hours</b>, <b>Scheduling Rules</b> (timezone), and any <b>Leave Dates</b> — covered in detail in the <b>OneForma Recording Tool</b> module if you need a refresher.</p>
+   <div class="callout"><span class="c-ic">ℹ</span><span class="c-tx"><b>Working Hours</b> is a separate section inside the OneForma tool — it's not the same as your <b>Samay</b> timesheet from Step 1. Samay tracks time you've worked; Working Hours tells the system when you're available to be booked.</span></div>
+   <p style="text-align:center;margin:16px 0"><a href="https://appcenter.oneforma.com/apps/code-switching-audio-admin/console/my-assignments" target="_blank" rel="noopener" class="btn btn-primary" style="text-decoration:none;display:inline-block;padding:12px 26px">Open the Recording Tool ↗</a></p>
+
+   <h3>3. Wait for participants to book you</h3>
+   <p>Nobody schedules your sessions for you — once your Working Hours are set, participants choose their own session times from the slots your hours make available. Keep an eye on <b>My Board → Departure Board</b>; your first real session will appear there as soon as a participant books it. There's nothing else to do until then.</p>
+   <div class="callout"><span class="c-ic">ℹ</span><span class="c-tx">This can take a few days depending on how quickly participants book. If you haven't seen a session appear after a week, reach out to your Project Manager.</span></div>
+
+   <h3>4. Keep the Session Checklist open during sessions</h3>
+   <p>Before your first live session, review the <b>Session Checklist</b> — an end-to-end, section-by-section reference covering joining, intro scripts, recording structure, QA, and closing out. Keep it open in another tab while you moderate.</p>
+   <p style="text-align:center;margin:16px 0"><button class="btn btn-primary" style="padding:12px 26px" onclick="go('checklist')">Open the Session Checklist →</button></p>
+   <div class="callout"><span class="c-ic">✓</span><span class="c-tx">That's it — you're fully onboarded. Welcome to Project Maple.</span></div>`},
 
 ];
 
@@ -905,7 +921,7 @@ async function saveProgress(moduleId,status,score){if(!LIVE||!/^https?:\/\//.tes
   catch(e){console.error('[Maple] saveProgress failed:',e);}}
 
 const NAV={
- moderator:[{g:'Onboarding'},{v:'path',ic:'🧭',label:'My Learning Path'},{v:'resources',ic:'📎',label:'Resources'}],
+ moderator:[{g:'Onboarding'},{v:'path',ic:'🧭',label:'My Learning Path'},{v:'resources',ic:'📎',label:'Resources'},{v:'checklist',ic:'✅',label:'Session Checklist'}],
  admin:[{g:'Program'},{v:'dash',ic:'📊',label:'Cohort Dashboard'},{v:'curriculum',ic:'📚',label:'Curriculum'}]
 };
 const ROLE_LABEL={moderator:'Mod',admin:'Admin'};
@@ -927,7 +943,7 @@ function logout(){document.getElementById('login').style.display='flex';document
 function renderSidebar(){document.getElementById('sidebar').innerHTML=NAV[ROLE].map(it=>it.g?`<div class="side-group">${it.g}</div>`:`<button class="side-item ${it.v===VIEW?'active':''}" onclick="go('${it.v}')"><span class="si-ic">${it.ic}</span>${it.label}</button>`).join('');}
 function go(v){VIEW=v;renderSidebar();renderView();document.getElementById('sidebar').classList.remove('open');window.scrollTo(0,0);}
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');}
-function renderView(){const c=document.getElementById('content');const f={path:vPath,resources:vResources,module:vModule,dash:vDash,curriculum:vCurriculum}[VIEW];c.innerHTML=f?f():'';if(VIEW==='dash')drawCharts();}
+function renderView(){const c=document.getElementById('content');const f={path:vPath,resources:vResources,checklist:vChecklist,module:vModule,dash:vDash,curriculum:vCurriculum}[VIEW];c.innerHTML=f?f():'';if(VIEW==='dash')drawCharts();}
 
 /* ===================== MODERATOR: PATH ===================== */
 function moduleState(i){const m=MODULES[i];if(ME.done.has(m.id))return'done';if(m.type==='quiz'){return contentIds.every(id=>ME.done.has(id))?'active':'locked';}
@@ -962,7 +978,7 @@ function vModule(){const m=MODULES[CUR_MOD];if(m.type==='quiz')return vQuiz();
  const canContinue=alreadyDone||qzDone;
  const continueBtn=canContinue
   ?`<button class="btn btn-primary btn-lg" onclick="completeModule()">${alreadyDone?'Continue →':'Mark complete & continue →'}</button>`
-  :`<button class="btn btn-primary btn-lg" disabled title="Answer all module questions to continue">Answer questions to continue</button>`;
+  :`<button id="mod-continue-btn" class="btn btn-primary btn-lg" disabled title="Answer all module questions to continue">Answer questions to continue</button>`;
  return `<button class="btn btn-secondary" style="margin-bottom:18px" onclick="go('path')">← Back to path</button>
   <div class="reader"><div style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-ink);margin-bottom:6px">Module ${CUR_MOD+1} of ${MODULES.length} · ${m.min} min</div>
   <h2>${m.title}</h2><div class="r-sub">${m.sub}</div>${bodyHtml}${qzHtml}
@@ -982,9 +998,87 @@ function completeModule(){const m=MODULES[CUR_MOD];ME.done.add(m.id);saveProgres
 /* ===================== QUIZ ===================== */
 // per-module inline quiz handled by MOD_QZ
 
+/* ===================== SESSION CHECKLIST ===================== */
+const REC_TARGETS=[10,10,20,28,20,28,10,20,6,5];
+const REC_TARGET_TOTAL=REC_TARGETS.reduce((a,b)=>a+b,0);
+const CHECKLIST_SECTIONS=[
+ {t:'1 · Before You Join',items:[
+   'Confirm the session on <b>My Board → Departure Board</b> — right date, time, and participants.',
+   'Open the <b>Session SOP</b> and <b>Topic & Prompt Bank</b> in another tab.',
+   'Test your microphone and find a quiet room with no background noise.',
+   'Join the room at least <b>5 minutes early</b> — never make participants wait in an empty room.'
+ ]},
+ {t:'2 · Joining & Sound Check',items:[
+   'Paste the <b>welcome chat message</b> (below) as soon as you join.',
+   'Confirm the roster: two participants + you as MOD.',
+   'Agree on the <b>aliases</b> everyone wants used — no real names, ever.',
+   'Sound-check each participant — confirm they can hear you and each other clearly.'
+ ],extra:`<div class="callout"><span class="c-ic">\u201c</span><span class="c-tx"><i>"Hi, and thank you for joining Project Maple! I'll be your moderator today — I'll guide you through the session and keep us on track. Before we begin, please make sure you're in a quiet room with no background noise or other voices, and that your microphone is connected and microphone access is enabled in your browser on the device you're using."</i></span></div>`},
+ {t:'3 · Intro / Briefing',items:[
+   'Brief participants on the goal: natural conversation, mixing in English, no script.',
+   'Confirm they completed registration and consent at OneForma before recording anything.',
+   'Run at least <b>two practice takes</b> — don\'t start real recording until switching feels natural.'
+ ],extra:`<p style="color:var(--text3);font-size:13px;margin-top:10px"><b>Spoken briefing script:</b></p><div class="callout"><span class="c-ic">\u201c</span><span class="c-tx"><i>"Thanks so much for joining today! We're putting together natural, everyday conversations between bilingual speakers — the kind where you slip between your primary language and English the way you actually do in real life, mixing in English words and phrases wherever it feels natural. There's no script and nothing to memorize — just talk about the selected topic like you normally would with a friend or family member who speaks the same languages you do. As a rough guide, imagine dropping in an English word or phrase every few sentences or so — but don't worry about counting, just let it come out naturally as you talk. The only thing to avoid is forcing in specific English words on purpose; we just want your normal, natural way of talking."</i></span></div>`},
+ {t:'4 · Recording Structure',
+  note:`<p style="font-size:14px;line-height:1.5;margin:0 0 12px 0">10 recordings per session, each on a fresh topic — pull from the Topic & Prompt Bank. Targets below are a pacing guide, not a rigid script; hard bounds for any single recording are <b>3–30 min</b>. Enter each recording's actual length as you go — the total updates live.</p>`,
+  custom:(()=>{
+   const rows=REC_TARGETS.map((t,i)=>`<tr style="border-bottom:.5px solid var(--border)"><td style="padding:8px 4px;font-weight:600">${i+1}</td><td style="padding:8px 4px;color:var(--text3)">~${t} min</td><td style="padding:8px 4px"><input type="number" min="0" step="0.5" placeholder="0" class="rec-dur-input" data-idx="${i}" oninput="updateRecTotal()" style="width:80px;padding:6px 8px;background:var(--input-bg);border:.5px solid var(--border-strong);border-radius:8px;color:var(--text);font-family:inherit;font-size:14px"></td></tr>`).join('');
+   return `<div id="recTotalBar" style="display:flex;justify-content:space-between;align-items:center;background:var(--bg3);border:.5px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:14px;flex-wrap:wrap;gap:12px">
+     <div><div style="font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--text3)">Recorded so far</div><div id="recTotalDone" style="font-size:22px;font-weight:700;color:var(--accent-ink)">0 min</div></div>
+     <div style="text-align:right"><div style="font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--text3)">Remaining (target ~${REC_TARGET_TOTAL} min)</div><div id="recTotalLeft" style="font-size:22px;font-weight:700">${REC_TARGET_TOTAL} min</div></div>
+   </div>
+   <table style="width:100%;border-collapse:collapse;margin-bottom:8px">
+     <thead><tr style="text-align:left;font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;border-bottom:.5px solid var(--border-strong)"><th style="padding:6px 4px">#</th><th style="padding:6px 4px">Target</th><th style="padding:6px 4px">Actual (min)</th></tr></thead>
+     <tbody>${rows}</tbody>
+   </table>
+   <div style="text-align:right;margin-bottom:4px"><button class="btn btn-secondary" style="padding:6px 12px;font-size:12px" onclick="resetRecTotals()">Reset</button></div>`;
+  })(),
+  extra:`<p style="font-size:14px;line-height:1.5;margin-top:10px">Watch <b>REC TIME</b> in the tool and never speak during a take — your voice on a participant's channel is grounds for rejection. See the Session SOP for the exact order Recording 1–10 should run in.</p><p style="margin-top:10px"><a href="https://digitaltechedge.sharepoint.com/:w:/r/sites/Verdi_Juniper/Shared%20Documents/QA/For%20Moderator/Juniper_Topic_Prompt_Bank_v1.0_20260722.docx?d=w043cf7074f204896b2aa3cf8dad88a56&amp;csf=1&amp;web=1&amp;e=i1B73V" target="_blank" rel="noopener" style="color:var(--accent-ink);font-weight:600">Open the Topic & Prompt Bank ↗</a></p>`},
+ {t:'5 · QA Each Recording',items:[
+   'Once your recording target is met, let participants leave — no need to keep them waiting through QA.',
+   'Tag every <b>Conversation Topic</b> the pair actually discussed.',
+   'Answer all <b>13 checklist questions</b> in Recording Review.',
+   'All Yes unlocks Pass / Weak Pass; a single No leaves only Fail. When unsure, re-record rather than pass.'
+ ]},
+ {t:'6 · Closing Out',items:[
+   'Click <b>END</b> to end the call — this releases participants from the room.',
+   'Go to <b>Operation → Sessions</b>, open the session, scroll to Actions, and click <b>Close Session</b>.',
+   'Never skip closing the session — an open session keeps its status as "In progress" and holds up reporting.'
+ ]}
+];
+function updateRecTotal(){
+ let sum=0;
+ document.querySelectorAll('.rec-dur-input').forEach(inp=>{const v=parseFloat(inp.value);if(!isNaN(v))sum+=v;});
+ const doneEl=document.getElementById('recTotalDone');
+ const leftEl=document.getElementById('recTotalLeft');
+ const round1=n=>Math.round(n*10)/10;
+ if(doneEl)doneEl.textContent=round1(sum)+' min';
+ if(leftEl){
+   const left=Math.max(0,REC_TARGET_TOTAL-sum);
+   leftEl.textContent=round1(left)+' min';
+   leftEl.style.color=left<=0?'var(--green)':'var(--text)';
+ }
+}
+function resetRecTotals(){
+ document.querySelectorAll('.rec-dur-input').forEach(inp=>{inp.value='';});
+ updateRecTotal();
+}
+function renderChecklistSection(s){
+ const items=(s.items||[]).map(it=>`<label style="display:flex;gap:10px;align-items:flex-start;margin:8px 0;cursor:pointer;font-size:14px;line-height:1.5"><input type="checkbox" style="margin-top:4px;width:16px;height:16px;flex-shrink:0;accent-color:var(--accent-ink)"><span>${it}</span></label>`).join('');
+ return `<details style="background:var(--card-bg);border:.5px solid var(--border);border-radius:12px;margin-bottom:10px">
+   <summary style="padding:14px 16px;font-weight:600;cursor:pointer">${s.t}</summary>
+   <div style="padding:0 16px 16px 16px">${s.note||''}${items}${s.custom||''}${s.extra||''}</div>
+ </details>`;
+}
+function vChecklist(){
+ return `<div class="page-head"><div><div class="page-title">Session Checklist</div><div class="page-sub">Maple, end to end — keep this open in another tab while you moderate. Expand only the section you need.</div></div></div>
+  ${CHECKLIST_SECTIONS.map(renderChecklistSection).join('')}
+  <div class="callout"><span class="c-ic">ℹ</span><span class="c-tx">Checkboxes and recording durations here are just for your own tracking during a session — nothing is saved. For the full step-by-step reference, see the <b>Session SOP</b> under Resources.</span></div>`;
+}
+
 /* ===================== RESOURCES ===================== */
 function vResources(){const items=[
-   ['📄','Moderator SOP','The full step-by-step run-of-session guide — keep it open during live sessions.','https://digitaltechedge.sharepoint.com/:w:/r/sites/Verdi_Juniper/Shared%20Documents/QA/For%20Moderator/Juniper_Moderator_SOP_v1.0.docx?d=wc6494b18c2ae45e4b4c28388e78c2cd6&amp;csf=1&amp;web=1&amp;e=aZOnbY'],
+   ['📄','Session SOP','The full step-by-step run-of-session guide — keep it open during live sessions.','https://digitaltechedge.sharepoint.com/:w:/r/sites/Verdi_Juniper/Shared%20Documents/QA/For%20Moderator/Juniper_Moderator_SOP_v1.0.docx?d=wc6494b18c2ae45e4b4c28388e78c2cd6&amp;csf=1&amp;web=1&amp;e=aZOnbY'],
    ['📘','Moderator Guide','The source-of-truth guidelines from the QM team.','https://digitaltechedge.sharepoint.com/:w:/r/sites/Verdi_Juniper/Shared%20Documents/Recruitment/QA/For%20Moderator/Maple_Moderator_Guide_v1.0_20260807.docx?d=wd546a0a95932429492ef80ca086a57d8&amp;csf=1&amp;web=1&amp;e=W0jq5Z'],
    ['🗣️','Topic & Prompt Bank','Topics and follow-ups, tagged to steer the English mix.','https://digitaltechedge.sharepoint.com/:w:/r/sites/Verdi_Juniper/Shared%20Documents/QA/For%20Moderator/Juniper_Topic_Prompt_Bank_v1.0_20260722.docx?d=w043cf7074f204896b2aa3cf8dad88a56&amp;csf=1&amp;web=1&amp;e=i1B73V'],
    ['🛠️','Tooling Guide','Screens and steps for the OneForma recording room.','https://digitaltechedge.sharepoint.com/:w:/r/sites/Code-Switching_Collection_Moderators/Shared%20Documents/Guideline%20Documents/Code-Switching_Moderator_Tooling_Guide_DRAFT.docx?d=w51a00a92e54b49e4a40db3e95c4e2a2a&amp;csf=1&amp;web=1&amp;e=VLWMxw'],
