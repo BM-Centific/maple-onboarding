@@ -36,12 +36,11 @@ input,select,textarea{font-family:inherit;}input:focus{outline:none;}
 .lg-go{width:100%;margin-top:6px;background:var(--accent);color:#fff;border-radius:12px;padding:13px;font-weight:500;font-size:15px;transition:all .25s cubic-bezier(.4,0,.2,1);}
 .lg-go:hover{background:var(--accent-dim);transform:translateY(-1px);}
 .lg-hint{font-size:12px;color:var(--text3);margin-top:12px;line-height:1.45;}
-.lg-demo{margin-top:14px;padding-top:14px;border-top:.5px solid var(--border);font-size:12px;color:var(--text3);}
-.lg-demo button{color:var(--accent-ink);font-weight:600;font-size:12px;}.lg-demo button:hover{text-decoration:underline;}
+
 
 /* nav */
 nav{position:sticky;top:0;z-index:200;height:52px;background:var(--nav-bg);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:14px;padding:0 16px;}
-nav .nav-tabs{flex-shrink:1;min-width:0;max-width:420px;}
+nav .nav-tabs{flex-shrink:1;min-width:0;max-width:600px;width:100%;}
 .nav-left{display:flex;align-items:center;gap:12px;flex:1;min-width:0;}
 .nav-logo{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#F0A24D);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:14px;}
 .nav-brand{font-size:15px;font-weight:600;letter-spacing:-.02em;}.nav-brand span{color:var(--text3);font-weight:400;}
@@ -54,9 +53,9 @@ nav .nav-tabs{flex-shrink:1;min-width:0;max-width:420px;}
 .role-pill{font-size:9px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;border-radius:20px;background:var(--accent-soft);color:var(--accent-ink);}
 
 .shell{display:flex;min-height:calc(100vh - 52px);}
-.nav-tabs{display:flex;gap:3px;background:var(--bg3);border:.5px solid var(--border);border-radius:11px;padding:3px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.nav-tabs{display:flex;gap:3px;background:var(--bg3);border:.5px solid var(--border);border-radius:11px;padding:3px;overflow-x:visible;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
 .nav-tabs::-webkit-scrollbar{display:none;}
-.nav-tab{display:flex;align-items:center;gap:7px;white-space:nowrap;padding:7px 14px;border-radius:8px;font-size:13.5px;font-weight:500;color:var(--text2);transition:all .18s;flex-shrink:0;}
+.nav-tab{display:flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap;padding:7px 14px;border-radius:8px;font-size:13.5px;font-weight:500;color:var(--text2);transition:all .18s;flex:1;}
 .nav-tab:hover{color:var(--text);}
 .nav-tab.active{background:var(--bg2);color:var(--accent-ink);font-weight:600;box-shadow:0 1px 6px rgba(0,0,0,.10);}
 .nav-tab .nt-ic{font-size:14px;}
@@ -216,7 +215,7 @@ nav .nav-tabs{flex-shrink:1;min-width:0;max-width:420px;}
 .rec-step-btn:active{transform:scale(0.94);}
 .rec-dur-input{width:46px;height:32px;text-align:center;background:transparent;border:none;border-left:.5px solid var(--border-strong);border-right:.5px solid var(--border-strong);color:var(--text);font-family:inherit;font-size:14px;-moz-appearance:textfield;}
 .rec-dur-input::-webkit-outer-spin-button,.rec-dur-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
-@media(max-width:780px){.content{padding:18px 16px;}.nav-brand span{display:none;}.reader{padding:24px 20px;}.panel-grid{grid-template-columns:1fr;}nav{height:auto;flex-wrap:wrap;padding:8px 12px;align-items:center;}.nav-left{flex-basis:100%;order:1;margin-bottom:6px;}.nav-tabs{order:2;flex-basis:100%;margin-bottom:6px;}.nav-right{order:3;flex-basis:100%;justify-content:space-between;}}
+@media(max-width:780px){.content{padding:18px 16px;}.nav-brand span{display:none;}.reader{padding:24px 20px;}.panel-grid{grid-template-columns:1fr;}nav{height:auto;flex-wrap:wrap;padding:8px 12px;align-items:center;}.nav-left{flex-basis:100%;order:1;margin-bottom:6px;}.nav-tabs{order:2;flex-basis:100%;max-width:none;margin-bottom:6px;overflow-x:auto;}.nav-tab{flex:none;}.nav-right{order:3;flex-basis:100%;justify-content:space-between;}}
 </style>
 </head>
 <body>
@@ -231,9 +230,8 @@ nav .nav-tabs{flex-shrink:1;min-width:0;max-width:420px;}
     <input id="emailField" class="lg-input" type="email" autocomplete="email" placeholder="you@centific.com" onkeydown="if(event.key==='Enter')doLogin()">
     <div id="lgErr" class="lg-err"></div>
     <button class="lg-go" onclick="doLogin()">Continue →</button>
-    <div class="lg-hint">Moderators land in their learning path; program admins land in the cohort dashboard — no need to choose.</div>
-    <div class="lg-demo">Demo shortcuts: <button onclick="demoLogin('moderator')">enter as moderator</button> · <button onclick="demoLogin('admin')">enter as admin</button></div>
-    <div style="text-align:center;margin-top:8px;font-size:10px;color:var(--text3);letter-spacing:.04em">v1.3.081926 · demo build</div>
+    <div class="lg-hint">We'll take you straight to your learning path.</div>
+    <div style="text-align:center;margin-top:8px;font-size:10px;color:var(--text3);letter-spacing:.04em">v1.3.081926</div>
 
   </div>
 </div>
@@ -587,11 +585,10 @@ const MODULES=[
    <p>This is a guided demo of a complete session in the OneForma tool — joining and briefing, recording takes, QA, and closing out. It's meant to be watched <b>hand-in-hand with the Session SOP</b>: the modules here teach the concepts, and this shows you the click-by-click flow in the real tool. Keep the SOP open and follow along.</p>
    <div class="callout"><span class="c-ic">ℹ</span><span class="c-tx">The video below refers to this document as the "Moderator SOP" — it's the same document, just renamed to <b>Session SOP</b> since it was recorded. Look for that name under Resources.</span></div>
    <div class="callout warn"><span class="c-ic">⚠</span><span class="c-tx">This video is somewhat outdated — for the current click-by-click flow, refer to the <b>OneForma Moderator Tooling Guide</b> under Resources, especially for: <b>entering your availability/working hours</b>, <b>checking which slots have opened for you</b>, and <b>understanding which slots are available for participants to book</b>.</span></div>
-   <div class="callout warn"><span class="c-ic">⚠</span><span class="c-tx">This video is somewhat outdated — for the current click-by-click flow, refer to the <b>OneForma Moderator Tooling Guide</b> under Resources, especially for: <b>entering your availability/working hours</b>, <b>checking which slots have opened for you</b>, and <b>understanding which slots are available for participants to book</b>.</span></div>
    <div style="position:relative;padding-top:56.25%;border-radius:12px;overflow:hidden;border:.5px solid var(--border);background:#000;margin:14px 0">
-     <iframe src="https://digitaltechedge.sharepoint.com/sites/Verdi_Juniper/_layouts/15/embed.aspx?UniqueId=479783c0-17ce-4573-accf-0d3023c43a28" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen title="Maple session walkthrough"></iframe>
+     <iframe src="https://digitaltechedge.sharepoint.com/sites/Code-Switching_Collection_Moderators/_layouts/15/embed.aspx?UniqueId=b5cf2a7d-03d6-48af-8077-fee7319cee82" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen title="Maple session walkthrough"></iframe>
    </div>
-   <div class="callout"><span class="c-ic">▶</span><span class="c-tx">Signed in with your Centific account, the recording plays above. If it doesn’t load, <a href="https://digitaltechedge.sharepoint.com/:v:/r/sites/Verdi_Juniper/Shared%20Documents/QA/For%20Moderator/Project%20Juniper%20-%20Moderator%20SOP%20_%20Tooling%20Guide-20260804_194821-Meeting%20Recording.mp4?d=w479783c017ce4573accf0d3023c43a28&amp;csf=1&amp;web=1&amp;e=UlqwSj" target="_blank" rel="noopener" style="color:var(--accent-ink);font-weight:600">open it in SharePoint ↗</a>.</span></div>`},
+   <div class="callout"><span class="c-ic">▶</span><span class="c-tx">Signed in with your Centific account, the recording plays above. If it doesn’t load, <a href="https://digitaltechedge.sharepoint.com/:v:/r/sites/Code-Switching_Collection_Moderators/Shared%20Documents/Video%20Walkthroughs/Project%20Juniper%20-%20Moderator%20SOP%20_%20Tooling%20Guide-20260804_194821-Meeting%20Recording.mp4?d=wb5cf2a7d03d648af8077fee7319cee82&amp;csf=1&amp;web=1&amp;e=LwmzDy" target="_blank" rel="noopener" style="color:var(--accent-ink);font-weight:600">open it in SharePoint ↗</a>.</span></div>`},
  {id:'privacy',ic:'🔐',title:'Privacy & Professional Conduct',sub:'Aliases, PII, and handling participants',min:4,type:'content',body:`
    <h3>Aliases keep it anonymous</h3>
    <p>Participants sign up with a <b>fake name / alias</b> and never see each other's real names. Confirm what each wants to be called, and remind everyone not to say <b>real names, locations, workplaces, or other personal details</b> on the recording — real identifiers fail QA.</p>
@@ -601,8 +598,13 @@ const MODULES=[
    <ul><li>Be respectful and calm; give feedback only between takes.</li><li>Stay muted during takes — your voice on a channel is a rejection.</li></ul>
    <div class="callout"><span class="c-ic">✓</span><span class="c-tx">Next up: the <b>knowledge check</b>. It pulls from everything above — pass it and you're cleared for production.</span></div>`},
  
- {id:'rep_centific',ic:'🏢',title:'Representing Centific',sub:'How you show up — in sessions, in chat, and everywhere else',min:6,type:'content',body:`
+ {id:'rep_centific',ic:'🏢',title:'Representing Centific',sub:'How you show up — in sessions, in chat, and everywhere else',min:8,type:'content',body:`
    <p>For most participants, you are the only Centific person they will ever meet. Their entire impression of this company is you, on a screen, for two to three hours.</p>
+   <p>Watch the walkthrough below for how Centific branding and professionalism show up in practice.</p>
+   <div style="position:relative;padding-top:56.25%;border-radius:12px;overflow:hidden;border:.5px solid var(--border);background:#000;margin:14px 0">
+     <iframe src="https://digitaltechedge.sharepoint.com/sites/Code-Switching_Collection_Moderators/_layouts/15/embed.aspx?UniqueId=eea1166e-a2d3-497b-849e-e4adcb117ed7" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen title="Moderator Fundamentals - Centific Branding"></iframe>
+   </div>
+   <div class="callout"><span class="c-ic">▶</span><span class="c-tx">Signed in with your Centific account, the walkthrough plays above. If it doesn't load, <a href="https://digitaltechedge.sharepoint.com/:v:/r/sites/Code-Switching_Collection_Moderators/Shared%20Documents/Video%20Walkthroughs/Moderator%20Fundamentals%20-%20Centific%20Branding.mp4?d=weea1166ea2d3497b849ee4adcb117ed7&amp;csf=1&amp;web=1&amp;e=7sOcnI" target="_blank" rel="noopener" style="color:var(--accent-ink);font-weight:600">open it in SharePoint ↗</a>.</span></div>
 
    <h3>The virtual handshake</h3>
    <p>You can't shake hands, so signal professionalism the way the online format allows:</p>
@@ -679,7 +681,7 @@ const MODULES=[
    <div style="position:relative;padding-top:56.25%;border-radius:12px;overflow:hidden;border:.5px solid var(--border);background:#000;margin:14px 0">
      <iframe src="https://digitaltechedge.sharepoint.com/sites/Code-Switching_Collection_Moderators/_layouts/15/embed.aspx?UniqueId=59f61ded-88d8-4ac9-917e-80383b7f262b" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen title="Moderator Fundamentals - Participant Experience Scenarios"></iframe>
    </div>
-   <div class="callout"><span class="c-ic">▶</span><span class="c-tx">Signed in with your Centific account, the walkthrough plays above. If it doesn't load, <a href="https://digitaltechedge.sharepoint.com/:v:/r/sites/Code-Switching_Collection_Moderators/Shared%20Documents/Project%20Maple/Onboarding%20Resources/Video%20Walkthroughs/Moderator%20Fundamentals%20-%20PT%20Experience%20Scenarios.mp4?d=w59f61ded88d84ac9917e80383b7f262b&amp;csf=1&amp;web=1&amp;e=NJA7WH" target="_blank" rel="noopener" style="color:var(--accent-ink);font-weight:600">open it in SharePoint ↗</a>.</span></div>
+   <div class="callout"><span class="c-ic">▶</span><span class="c-tx">Signed in with your Centific account, the walkthrough plays above. If it doesn't load, <a href="https://digitaltechedge.sharepoint.com/:v:/r/sites/Code-Switching_Collection_Moderators/Shared%20Documents/Video%20Walkthroughs/Moderator%20Fundamentals%20-%20PT%20Experience%20Scenarios.mp4?d=w59f61ded88d84ac9917e80383b7f262b&amp;csf=1&amp;web=1&amp;e=XZGcBD" target="_blank" rel="noopener" style="color:var(--accent-ink);font-weight:600">open it in SharePoint ↗</a>.</span></div>
 
    <h3>4.1 · Welcoming a nervous participant</h3>
    <p><i>Situation: a participant joins sounding anxious — they've never done this.</i></p>
@@ -835,7 +837,7 @@ const MODULES=[
    <div style="position:relative;padding-top:56.25%;border-radius:12px;overflow:hidden;border:.5px solid var(--border);background:#000;margin:14px 0">
      <iframe src="https://digitaltechedge.sharepoint.com/sites/Code-Switching_Collection_Moderators/_layouts/15/embed.aspx?UniqueId=d7136f8e-1458-433a-9b95-e176cdcd94ad" style="position:absolute;inset:0;width:100%;height:100%;border:0" allowfullscreen title="Moderator Fundamentals - Samay Timesheet"></iframe>
    </div>
-   <div class="callout"><span class="c-ic">▶</span><span class="c-tx">Signed in with your Centific account, the walkthrough plays above. If it doesn't load, <a href="https://digitaltechedge.sharepoint.com/:v:/r/sites/Code-Switching_Collection_Moderators/Shared%20Documents/Project%20Maple/Onboarding%20Resources/Video%20Walkthroughs/Moderator%20Fundamentals%20-%20Samay%20Timesheet.mp4?d=wd7136f8e1458433a9b95e176cdcd94ad&amp;csf=1&amp;web=1&amp;e=WN1jbg" target="_blank" rel="noopener" style="color:var(--accent-ink);font-weight:600">open it in SharePoint ↗</a>.</span></div>
+   <div class="callout"><span class="c-ic">▶</span><span class="c-tx">Signed in with your Centific account, the walkthrough plays above. If it doesn't load, <a href="https://digitaltechedge.sharepoint.com/:v:/r/sites/Code-Switching_Collection_Moderators/Shared%20Documents/Video%20Walkthroughs/Moderator%20Fundamentals%20-%20Samay%20Timesheet.mp4?d=wd7136f8e1458433a9b95e176cdcd94ad&amp;csf=1&amp;web=1&amp;e=vhnaq9" target="_blank" rel="noopener" style="color:var(--accent-ink);font-weight:600">open it in SharePoint ↗</a>.</span></div>
    <div class="callout"><span class="c-ic">ℹ</span><span class="c-tx">Your Project Maple PID is <span style="background:var(--amber-bg);color:var(--amber-text);font-weight:700;padding:1px 6px;border-radius:4px;font-size:13px">UWHSZZZZZ26I029</span> (Code Switching OTS Maple). Use it for both onboarding and live-session hours unless your Project Manager tells you otherwise.</span></div>
 
    <h3>How you're paid</h3>
@@ -955,7 +957,7 @@ async function doLogin(){const el=document.getElementById('emailField');const em
  const rec=findUser(email);
  if(!rec){err.textContent="That email isn't on the moderator list yet \u2014 check with your program admin.";return;}
  err.textContent='';applyProfile(rec);startApp(rec.role,rec.name);}
-async function demoLogin(role){const email=role==='admin'?'jordan.lee@centific.com':'alex.moderator@centific.com';const el=document.getElementById('emailField');if(el)el.value=email;await doLogin();}
+
 function startApp(r,name){ROLE=r;VIEW=(r==='admin'?'dash':'path');document.getElementById('login').style.display='none';document.getElementById('nav').style.display='flex';document.getElementById('shell').style.display='flex';const nm=name||(r==='admin'?'Jordan Lee':ME.name);if(r==='moderator')ME.name=nm;document.getElementById('userName').textContent=nm;document.getElementById('userAv').textContent=nm[0].toUpperCase();document.getElementById('userRole').textContent=ROLE_LABEL[r];renderNavTabs();renderView();}
 function logout(){document.getElementById('login').style.display='flex';document.getElementById('nav').style.display='none';document.getElementById('shell').style.display='none';}
 function renderNavTabs(){document.getElementById('navTabs').innerHTML=NAV[ROLE].map(it=>`<button class="nav-tab ${it.v===VIEW?'active':''}" onclick="go('${it.v}')"><span class="nt-ic">${it.ic}</span>${it.label}</button>`).join('');}
@@ -1056,7 +1058,7 @@ const CHECKLIST_SECTIONS=[
    </table>
    <div style="text-align:right;margin-bottom:4px"><button class="btn btn-secondary" style="padding:6px 12px;font-size:12px" onclick="resetRecTotals()">Reset</button></div>`;
   })(),
-  extra:`<p style="font-size:14px;line-height:1.5;margin-top:10px">Watch <b>REC TIME</b> in the tool and never speak during a take — your voice on a participant's channel is grounds for rejection. See the Session SOP for the exact order Recording 1–10 should run in.</p><p style="margin-top:10px"><a href="https://digitaltechedge.sharepoint.com/:w:/r/sites/Verdi_Juniper/Shared%20Documents/QA/For%20Moderator/Juniper_Topic_Prompt_Bank_v1.0_20260722.docx?d=w043cf7074f204896b2aa3cf8dad88a56&amp;csf=1&amp;web=1&amp;e=i1B73V" target="_blank" rel="noopener" style="color:var(--accent-ink);font-weight:600">Open the Topic & Prompt Bank ↗</a></p>`},
+  extra:`<p style="font-size:14px;line-height:1.5;margin-top:10px">Watch <b>REC TIME</b> in the tool and never speak during a take — your voice on a participant's channel is grounds for rejection. See the Session SOP for the exact order Recording 1–10 should run in.</p><p style="margin-top:10px"><a href="https://digitaltechedge.sharepoint.com/:w:/r/sites/Code-Switching_Collection_Moderators/Shared%20Documents/Code-Switching%20Guideline%20Documents/Maple_Topic_Prompt_Bank_v1_0.docx?d=webd18ea7608e43639c4c7933ea4d5f71&amp;csf=1&amp;web=1&amp;e=RMVuYn" target="_blank" rel="noopener" style="color:var(--accent-ink);font-weight:600">Open the Topic & Prompt Bank ↗</a></p>`},
  {t:'5 · QA Each Recording',items:[
    'Once your recording target is met, let participants leave — no need to keep them waiting through QA.',
    'Tag every <b>Conversation Topic</b> the pair actually discussed.',
@@ -1109,11 +1111,11 @@ function vChecklist(){
 
 /* ===================== RESOURCES ===================== */
 function vResources(){const items=[
-   ['📄','Session SOP','The full step-by-step run-of-session guide — keep it open during live sessions.','https://digitaltechedge.sharepoint.com/:w:/r/sites/Verdi_Juniper/Shared%20Documents/QA/For%20Moderator/Juniper_Moderator_SOP_v1.0.docx?d=wc6494b18c2ae45e4b4c28388e78c2cd6&amp;csf=1&amp;web=1&amp;e=aZOnbY'],
-   ['📘','Moderator Guide','The source-of-truth guidelines from the QM team.','https://digitaltechedge.sharepoint.com/:w:/r/sites/Verdi_Juniper/Shared%20Documents/Recruitment/QA/For%20Moderator/Maple_Moderator_Guide_v1.0_20260807.docx?d=wd546a0a95932429492ef80ca086a57d8&amp;csf=1&amp;web=1&amp;e=W0jq5Z'],
-   ['🗣️','Topic & Prompt Bank','Topics and follow-ups, tagged to steer the English mix.','https://digitaltechedge.sharepoint.com/:w:/r/sites/Verdi_Juniper/Shared%20Documents/QA/For%20Moderator/Juniper_Topic_Prompt_Bank_v1.0_20260722.docx?d=w043cf7074f204896b2aa3cf8dad88a56&amp;csf=1&amp;web=1&amp;e=i1B73V'],
-   ['🛠️','Tooling Guide','Screens and steps for the OneForma recording room.','https://digitaltechedge.sharepoint.com/:w:/r/sites/Code-Switching_Collection_Moderators/Shared%20Documents/Guideline%20Documents/Code-Switching_Moderator_Tooling_Guide_DRAFT.docx?d=w51a00a92e54b49e4a40db3e95c4e2a2a&amp;csf=1&amp;web=1&amp;e=VLWMxw'],
-   ['🎬','Session Walkthrough Recording','The full demo session, start to finish.','https://digitaltechedge.sharepoint.com/:v:/r/sites/Verdi_Juniper/Shared%20Documents/QA/For%20Moderator/Project%20Juniper%20-%20Moderator%20SOP%20_%20Tooling%20Guide-20260804_194821-Meeting%20Recording.mp4?d=w479783c017ce4573accf0d3023c43a28&amp;csf=1&amp;web=1&amp;e=UlqwSj']];
+   ['📄','Session SOP','The full step-by-step run-of-session guide — keep it open during live sessions.','https://digitaltechedge.sharepoint.com/:w:/r/sites/Code-Switching_Collection_Moderators/Shared%20Documents/Project%20Maple/Maple_Session_SOP_v1_0.docx?d=wea2a989141044835bd90789c0614fc51&amp;csf=1&amp;web=1&amp;e=vxrSyI'],
+   ['📘','Moderator Guide','The source-of-truth guidelines from the QM team.','https://digitaltechedge.sharepoint.com/:w:/r/sites/Code-Switching_Collection_Moderators/Shared%20Documents/Project%20Maple/Maple_Moderator_Guide_v1_0.docx?d=wc2a315e0e89449afa743d4e1a0582df4&amp;csf=1&amp;web=1&amp;e=0MJI13'],
+   ['🗣️','Topic & Prompt Bank','Topics and follow-ups, tagged to steer the English mix.','https://digitaltechedge.sharepoint.com/:w:/r/sites/Code-Switching_Collection_Moderators/Shared%20Documents/Code-Switching%20Guideline%20Documents/Maple_Topic_Prompt_Bank_v1_0.docx?d=webd18ea7608e43639c4c7933ea4d5f71&amp;csf=1&amp;web=1&amp;e=RMVuYn'],
+   ['🛠️','Tooling Guide','Screens and steps for the OneForma recording room.','https://digitaltechedge.sharepoint.com/:w:/r/sites/Code-Switching_Collection_Moderators/Shared%20Documents/Code-Switching%20Guideline%20Documents/OneForma_Moderator_Tooling_Guide_v1_0.docx?d=wbbbde97acff84d0cb2e3cd115a8a96d2&amp;csf=1&amp;web=1&amp;e=6AJ744'],
+   ['🎬','Session Walkthrough Recording','The full demo session, start to finish.','https://digitaltechedge.sharepoint.com/:v:/r/sites/Code-Switching_Collection_Moderators/Shared%20Documents/Video%20Walkthroughs/Project%20Juniper%20-%20Moderator%20SOP%20_%20Tooling%20Guide-20260804_194821-Meeting%20Recording.mp4?d=wb5cf2a7d03d648af8077fee7319cee82&amp;csf=1&amp;web=1&amp;e=LwmzDy']];
  return `<div class="page-head"><div><div class="page-title">Resources</div><div class="page-sub">Your reference library — opens in SharePoint (Centific sign-in)</div></div></div>
   ${items.map(it=>`<a class="mod-card" style="margin-bottom:12px;text-decoration:none;color:inherit" href="${it[3]}" target="_blank" rel="noopener"><div class="mod-ic">${it[0]}</div><div class="mod-meta"><div class="mod-name">${it[1]}</div><div class="mod-sub">${it[2]}</div></div><div class="mod-right"><span class="pill blue">Open ↗</span></div></a>`).join('')}`;
 }
