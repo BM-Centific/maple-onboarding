@@ -262,9 +262,10 @@ input,select,textarea{font-family:inherit;}input:focus{outline:none;}
 .topic-trigger-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .topic-trigger svg{flex-shrink:0;color:var(--text3);}
 .topic-menu-popup{position:fixed;z-index:900;background:var(--card-bg);border:.5px solid var(--border-strong);border-radius:12px;box-shadow:var(--shadow-lg);padding:6px;max-height:280px;overflow-y:auto;animation:fadeUp .15s ease both;}
-.topic-menu-item{padding:9px 12px;border-radius:8px;font-size:13px;color:var(--text);cursor:pointer;white-space:nowrap;transition:background .12s;}
+.topic-menu-item{padding:9px 12px;border-radius:8px;font-size:13px;color:var(--text);cursor:pointer;white-space:nowrap;transition:background .12s;display:flex;align-items:center;gap:8px;}
+.topic-check{width:13px;flex-shrink:0;color:var(--accent-ink);font-weight:700;}
 .topic-menu-item:hover{background:var(--accent-soft);}
-.topic-menu-item.active{background:var(--accent);color:#fff;font-weight:600;}
+.topic-menu-item.active{background:var(--accent-soft);color:var(--text);font-weight:600;}
 .check-group{margin:10px 0 4px;}
 .check-item{display:flex;align-items:flex-start;gap:12px;padding:9px 0;cursor:pointer;font-size:14.5px;line-height:1.55;color:var(--text);border-bottom:.5px solid var(--border);}
 .check-group .check-item:last-child{border-bottom:none;}
@@ -701,7 +702,7 @@ const MODULES=[
    ${shot('rec_counter','REC counts up in the corner while recording is live.',480)}
    <p>The take saves to <b>Media Files</b> as a <b>Draft</b> — it can take a few minutes to appear.</p>
    ${shot('draft_saved','After you stop, the take saves to Media Files as a Draft.',480)}
-   <div class="callout info"><span class="c-ic">💡</span><span class="c-tx">Since files don't appear (or become taggable) right away, it's easy to lose track of which topic went with which take by the time you sit down to QA. The <b>Session Checklist</b>'s recording tracker has a <b>Topic discussed</b> dropdown for exactly this — jot it down right after each take so you have it to go off of during QA, instead of relying on memory.</span></div>
+   <div class="callout info"><span class="c-ic">💡</span><span class="c-tx">Since files don't appear (or become taggable) right away, it's easy to lose track of which topic(s) went with which take by the time you sit down to QA. The <b>Session Checklist</b>'s recording tracker has a <b>Topic discussed</b> menu for exactly this — select every topic that came up (a conversation often covers more than one) right after each take, so you have it to go off of during QA instead of relying on memory.</span></div>
    <div class="callout warn"><span class="c-ic">⚠</span><span class="c-tx"><b>Never speak during a take.</b> Your voice on a participant's channel is grounds for rejection — stop the take first if you must step in.</span></div>
 
    <h3>3. QA each recording</h3>
@@ -1241,9 +1242,18 @@ function toggleTopicMenu(key,ev){
  _topicMenuOpenFor=(_topicMenuOpenFor===key)?null:key;
  renderView();
 }
-function chooseTopic(key,topic){
- setRecTopic(key,topic); // already calls persistLocal()+renderView()
- _topicMenuOpenFor=null;
+function toggleTopicChoice(key,topic){
+ let arr=(recTopics[key]||[]).slice();
+ const has=arr.includes(topic);
+ if(topic==='No preference'){
+  arr=has?[]:['No preference'];
+ }else{
+  arr=arr.filter(t=>t!=='No preference'); // picking a real topic drops the "No preference" catch-all
+  arr=has?arr.filter(t=>t!==topic):[...arr,topic];
+ }
+ recTopics[key]=arr;
+ persistLocal();
+ renderView(); // menu stays open -- positionTopicMenu() (called at the end of renderView) rebuilds it with the new checks
 }
 function positionTopicMenu(){
  let popup=document.getElementById('topicMenuPopup');
@@ -1251,8 +1261,8 @@ function positionTopicMenu(){
  const trigger=document.querySelector('[data-topic-key="'+_topicMenuOpenFor+'"]');
  if(!trigger){if(popup)popup.remove();_topicMenuOpenFor=null;return;}
  if(!popup){popup=document.createElement('div');popup.id='topicMenuPopup';popup.className='topic-menu-popup';document.body.appendChild(popup);}
- const current=recTopics[_topicMenuOpenFor]||'';
- popup.innerHTML=RECORDING_TOPICS.map(t=>`<div class="topic-menu-item${t===current?' active':''}" onclick="chooseTopic('${_topicMenuOpenFor}','${t}')">${t}</div>`).join('');
+ const current=recTopics[_topicMenuOpenFor]||[];
+ popup.innerHTML=RECORDING_TOPICS.map(t=>{const checked=current.includes(t);return `<div class="topic-menu-item${checked?' active':''}" onclick="toggleTopicChoice('${_topicMenuOpenFor}','${t}')"><span class="topic-check">${checked?'✓':''}</span>${t}</div>`;}).join('');
  const rect=trigger.getBoundingClientRect();
  const width=Math.max(rect.width,190);
  popup.style.width=width+'px';
@@ -1410,8 +1420,7 @@ function getChecklistSections(){return [
 ];}
 let recDurations={};
 const RECORDING_TOPICS=['Daily Life & Routines','Food & Eating','Work & Study','Technology & Media','Travel & Culture','Health & Wellness','Shopping & Services','Hobbies & Free Time','Relationships & Social Life','Self & Identity','Current Events & Opinions','Home & Living','Family & Parenting','Science & Curiosity','No preference'];
-let recTopics={}; // { rowIndex: topicString } -- lets a moderator jot down what was actually discussed per recording, since Media Files entries don't appear/tag-able immediately; this is their own memory aid for QA later, not a submission to OneForma itself
-function setRecTopic(idx,val){recTopics[idx]=val;persistLocal();renderView();}
+let recTopics={}; // { rowIndex: [topicString,...] } -- lets a moderator jot down what was actually discussed per recording (a take can cover more than one topic), since Media Files entries don't appear/tag-able immediately; this is their own memory aid for QA later, not a submission to OneForma itself
 function adjustRec(idx,delta){
  const cur=recDurations[idx]||0;
  recDurations[idx]=Math.max(0,Math.round((cur+delta)*10)/10);
@@ -1449,15 +1458,15 @@ function buildRecTable(){
   const filled=!!recDurations[i];
   const neededVal=Math.min(30,Math.max(3,t+adjustment));
   const neededCell=filled?`<span style="color:var(--text3)">✓</span>`:`<span style="color:var(--accent-ink);font-weight:600">~${Math.round(neededVal)} min</span>`;
-  const topicSel=recTopics[i]||'';
-  const topicLabel=topicSel||'Select…';
+  const topicArr=recTopics[i]||[];
+  const topicLabel=topicArr.length===0?'Select…':topicArr.length===1?topicArr[0]:topicArr.length+' topics';
   return `<tr><td style="font-weight:600">${i+1}</td><td style="color:var(--text3)">~${t} min</td><td>
    <div class="rec-stepper">
      <button type="button" class="step-btn" aria-label="Decrease minutes" onclick="adjustRec(${i},-0.5)">−</button>
      <input type="number" class="step-val" min="0" step="0.5" value="${val||''}" placeholder="0" onchange="setRecMinutes(${i},this.value)">
      <button type="button" class="step-btn" aria-label="Increase minutes" onclick="adjustRec(${i},0.5)">+</button>
    </div>
-  </td><td>${neededCell}</td><td><button type="button" class="topic-trigger" data-topic-key="${i}" onclick="toggleTopicMenu(${i},event)"><span class="topic-trigger-label"${topicSel?'':' style="color:var(--text3)"'}>${topicLabel}</span><svg width="11" height="11" viewBox="0 0 18 18" fill="none"><path d="M4.5 6.75L9 11.25L13.5 6.75" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button></td></tr>`;
+  </td><td>${neededCell}</td><td><button type="button" class="topic-trigger" data-topic-key="${i}" onclick="toggleTopicMenu(${i},event)"><span class="topic-trigger-label"${topicArr.length?'':' style="color:var(--text3)"'}>${topicLabel}</span><svg width="11" height="11" viewBox="0 0 18 18" fill="none"><path d="M4.5 6.75L9 11.25L13.5 6.75" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button></td></tr>`;
  }).join('');
  const varianceLabel=variance<-0.05?`<span style="color:var(--red)">−${Math.round(Math.abs(variance)*10)/10} min short so far</span>`
    :variance>0.05?`<span style="color:var(--green)">+${Math.round(variance*10)/10} min extra so far</span>`
@@ -1470,7 +1479,7 @@ function buildRecTable(){
  <div style="overflow-x:auto"><table class="rec-table"><tr><th style="width:34px">#</th><th>Target</th><th>Actual (min)</th><th>Needed</th><th>Topic discussed</th></tr>${rows}</table></div>
  <div style="margin-top:10px"><button type="button" class="btn btn-secondary" onclick="addExtraRecording()">+ Add another recording</button></div>
  <p style="font-size:12.5px;color:var(--text3);margin-top:8px">The rows above are a <b>suggested</b> breakdown of the ~${REC_TARGET_TOTAL}-min target — in practice you may land on more or fewer recordings than listed, as long as the total gets there. <b>Needed</b> recalculates live off each row's own suggested length (clamped to this program's 3–30 min hard bounds), nudged by how far you've drifted from plan — use it to pace, not as a new fixed target. If you need more recordings than planned, click <b>Add another recording</b> above rather than trying to force the total into fewer, longer takes.</p>
- <p style="font-size:12.5px;color:var(--text3);margin-top:0"><b>Topic discussed</b> is just for you — files don't appear in Media Files (or become taggable) right away, so jotting the topic down here as you go means you're not relying on memory when you get to QA at the end of the session. This selection isn't submitted anywhere; use the real Conversation Topics field in the tool when you QA each file.</p>`;
+ <p style="font-size:12.5px;color:var(--text3);margin-top:0"><b>Topic discussed</b> is just for you — select every topic that came up in the take (a conversation often covers more than one). Files don't appear in Media Files (or become taggable) right away, so jotting these down as you go means you're not relying on memory when you get to QA at the end of the session. This selection isn't submitted anywhere; use the real Conversation Topics field in the tool when you QA each file.</p>`;
 }
 let checklistOpen={};
 let checklistChecks={};
