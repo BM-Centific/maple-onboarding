@@ -1210,7 +1210,14 @@ function findUser(email){
  if(email==='test.admin@centific.com')return{email,name:'Test Admin',role:'admin',loc:'',tz:'',active:'yes'};
  return DIR.find(r=>r.email===email);
 }
-function applyProfile(rec){if(rec.role!=='moderator')return;const p=progressFor(rec.email);ME.email=rec.email;ME.name=rec.name;ME.loc=rec.loc;ME.tz=rec.tz;ME.done=new Set(p.doneIds);ME.quizBest=p.score;ME.certified=(p.doneIds.size>=MODULES.filter(m=>m.type!=='quiz').length&&p.doneIds.size>0);}
+function applyProfile(rec){if(rec.role!=='moderator')return;const p=progressFor(rec.email);ME.email=rec.email;ME.name=rec.name;ME.loc=rec.loc;ME.tz=rec.tz;ME.done=new Set(p.doneIds);ME.quizBest=p.score;}
+/* Certification is ALWAYS derived fresh from ME.done, never cached -- this is the
+   Pine-style pattern (computed at render time from the actual data) rather than a
+   flag that has to be manually kept in sync every place ME.done changes. A cached
+   flag is exactly how a real bug shipped: applyProfile() set it once at login, and
+   completing the LAST module never recomputed it, so a moderator who finished
+   onboarding without logging back in never saw the certified state. */
+function isCertified(){return ME.done.size>=MODULES.filter(m=>m.type!=='quiz').length&&ME.done.size>0;}
 const LAST_LOGIN_KEY='maple_last_login';
 function setLastLogin(email){try{localStorage.setItem(LAST_LOGIN_KEY,email);}catch(e){}}
 function getLastLogin(){try{return localStorage.getItem(LAST_LOGIN_KEY);}catch(e){return null;}}
@@ -1285,7 +1292,7 @@ function overallPct(){return Math.round(ME.done.size/MODULES.length*100);}
 function vPath(){
  const pct=overallPct();const circ=2*Math.PI*30;const off=circ*(1-pct/100);
  let banner;
- if(ME.certified){banner=`<div class="cert done"><div class="cert-ring"><svg width="70" height="70"><circle cx="35" cy="35" r="30" stroke="var(--bg4)" stroke-width="6" fill="none"/><circle cx="35" cy="35" r="30" stroke="var(--green)" stroke-width="6" fill="none" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="0"/></svg><div class="pct" style="color:var(--green)">✓</div></div><div class="cert-body"><div class="cert-title">You're certified 🎉</div><div class="cert-desc">You've completed onboarding and passed the knowledge check. You're cleared to run real Maple sessions.</div></div><span class="badge-ok">● Cleared for production</span></div>`;}
+ if(isCertified()){banner=`<div class="cert done"><div class="cert-ring"><svg width="70" height="70"><circle cx="35" cy="35" r="30" stroke="var(--bg4)" stroke-width="6" fill="none"/><circle cx="35" cy="35" r="30" stroke="var(--green)" stroke-width="6" fill="none" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="0"/></svg><div class="pct" style="color:var(--green)">✓</div></div><div class="cert-body"><div class="cert-title">You're certified 🎉</div><div class="cert-desc">You've completed onboarding and passed the knowledge check. You're cleared to run real Maple sessions.</div></div><span class="badge-ok">● Cleared for production</span></div>`;}
  else{banner=`<div class="cert"><div class="cert-ring"><svg width="70" height="70"><circle cx="35" cy="35" r="30" stroke="var(--bg4)" stroke-width="6" fill="none"/><circle cx="35" cy="35" r="30" stroke="var(--accent)" stroke-width="6" fill="none" stroke-linecap="round" stroke-dasharray="${circ}" stroke-dashoffset="${off}"/></svg><div class="pct">${pct}%</div></div><div class="cert-body"><div class="cert-title">${pct===0?'Welcome — let\'s get you ready':'Keep going, '+ME.name.split(' ')[0]}</div><div class="cert-desc">Complete each module in order, then pass the knowledge check to be cleared for production. Work through it at your own pace.</div></div></div>`;}
  const rows=MODULES.map((m,i)=>{const st=moduleState(i);const isLast=i===MODULES.length-1;const lineDone=ME.done.has(m.id);
    const pill=st==='done'?'<span class="pill done">✓ Done</span>':st==='active'?`<span class="pill active">${m.type==='quiz'?'Take it':'Start'}</span>`:'<span class="pill locked">🔒 Locked</span>';
